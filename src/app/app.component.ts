@@ -36,11 +36,11 @@ declare var cordova: any;
 })
 
 export class AppComponent implements OnInit {
-  public title = 'barcode';
+  public title = 'wineem';
   ////////////////////////////
-  @ViewChild('form', {static: true}) form: ElementRef;
-  public server = '';
-  public db = '';
+  @ViewChild('form', {static: false}) form: ElementRef;
+  public server = 'http://181.111.252.90/xmlrpc/2';
+  public db = 'odoo_prod';
   public user = '';
   public pass = '';
   public uid = 0;
@@ -67,8 +67,6 @@ export class AppComponent implements OnInit {
   }
 
   public logData(): void {
-    this.odoo_url_value = window.localStorage.getItem('url');
-    this.odoo_db_value = window.localStorage.getItem('db');
     this.odoo_user_value = window.localStorage.getItem('user');
     this.odoo_pass_value = window.localStorage.getItem('pass');
   }
@@ -76,60 +74,52 @@ export class AppComponent implements OnInit {
   public logIn(e: any): void {
     e.preventDefault();
     console.log('Data Readed');
-    console.log('Server: ', this.form.nativeElement.elements['server'].value);
-    console.log('DB: ', this.form.nativeElement.elements['db'].value);
     console.log('User: ', this.form.nativeElement.elements['user'].value);
     console.log('Pass: ', this.form.nativeElement.elements['pass'].value);
 
-    this.server = this.form.nativeElement.elements['server'].value + '/xmlrpc';
-    this.db = this.form.nativeElement.elements['db'].value;
     this.user = this.form.nativeElement.elements['user'].value;
     this.pass = this.form.nativeElement.elements['pass'].value;
 
-    window.localStorage.setItem('url', this.form.nativeElement.elements['server'].value);
-    window.localStorage.setItem('db', this.form.nativeElement.elements['db'].value);
     window.localStorage.setItem('user', this.form.nativeElement.elements['user'].value);
     window.localStorage.setItem('pass', this.form.nativeElement.elements['pass'].value);
 
     ////////////////////////////////////////////////////////////////////////
-
-    const this_ = this;
 
     this.logState = 'active';
 
     const secondsCounter = timer(300);
 
     secondsCounter.subscribe( () => {
-      this_.showData = true;
+      this.showData = true;
       this.odooConnect(this.server, this.db, this.user, this.pass);
     });
   }
 
   public odooConnect(server: string, db: string, user: string, pass: string): void {
-    const this_ = this;
     this.logged = false;
     const forcedUserValue = $.xmlrpc.force('string', user);
     const forcedPasswordValue = $.xmlrpc.force('string', pass);
     const forcedDbNameValue = $.xmlrpc.force('string', db);
 
     $.xmlrpc({
-      url: this_.server + '/common',
+      url: this.server + '/common',
       methodName: 'login',
       dataType: 'xmlrpc',
       crossDomain: true,
       params: [forcedDbNameValue, forcedUserValue, forcedPasswordValue],
-      success: function(response: any, status: any, jqXHR: any) {
+      success: (response: any, status: any, jqXHR: any) => {
         console.log(response + ' - ' + status);
         if (response[0] !== false) {
-          this_.logged = true;
-          this_.uid = response[0];
+          this.logged = true;
+          this.inLoad = false;
+          this.uid = response[0];
         } else {
-          this_.logOut();
+          this.logOut();
         }
       },
-      error: function(jqXHR: any, status: any, error: any) {
+      error: (jqXHR: any, status: any, error: any) => {
         console.log('Err: ' + jqXHR + ' - ' + status + '-' + error);
-        this_.logOut();
+        this.logOut();
       }
     });
   }

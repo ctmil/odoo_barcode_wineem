@@ -62,7 +62,6 @@ export class ScannerComponent implements OnInit, OnChanges {
 
   public ngOnChanges(): void {
     if (this.logged) {
-      this.getProducts(this.server, this.db, this.user, this.pass, this.uid);
     }
   }
 
@@ -89,83 +88,12 @@ export class ScannerComponent implements OnInit, OnChanges {
                     'Result: ' + result.text + '\n' +
                     'Format: ' + result.format + '\n' +
                     'Cancelled: ' + result.cancelled);
-
-        switch (m) {
-          case 0:
-            this_.showScann = true;
-            break;
-          case 1:
-            this_.getPrice();
-            break;
-          default:
-            this_.showScann = true;
-        }
       },
       function (error: any) {
         console.log('Scanning failed: ' + error);
       },
       this_.scanConfig
    );
-  }
-
-  /* Get Products Information */
-  public getProducts(server_url: string, db: string, user: string, pass: string, uid: number): void {
-    const this_ = this;
-
-    $.xmlrpc({
-      url: server_url + '/2/object',
-      methodName: 'execute_kw',
-      crossDomain: true,
-      params: [db, uid, pass, 'product.template', 'search_read', [ [] ], {'fields': ['name', 'id', 'barcode', 'list_price']}],
-      success: function(response: any, status: any, jqXHR: any) {
-        console.log(response);
-        for (let i = 0; i < response[0].length; i++) {
-          this_.products[i] = {value: response[0][i].id, viewValue: response[0][i].name, barcode: response[0][i].barcode,
-          price: response[0][i].list_price};
-        }
-        console.log(this_.products);
-        this_.inLoad = false;
-      },
-      error: function(jqXHR: any, status: any, error: any) {
-        console.log('Error : ' + error );
-      }
-    });
-  }
-
-  /* Get Product Price */
-  public getPrice(): void {
-    for (let i = 0; i < this.products.length; i++) {
-      if (this.barcode === this.products[i].barcode) {
-        this.p_scanned = this.products[i].viewValue;
-        this.pr_scanned = '$ ' + String(this.products[i].price.toFixed(2));
-        this.showPPrice = true;
-      }
-    }
-  }
-
-  /* Write Barcode on Product */
-  public writeBarcode(pid: number): void {
-    const this_ = this;
-    this.inLoad = true;
-
-    $.xmlrpc({
-      url: this_.server + '/2/object',
-      methodName: 'execute_kw',
-      crossDomain: true,
-      params: [this_.db, this_.uid, this_.pass, 'product.template', 'write', [[pid], {'barcode': this_.barcode}]],
-      success: function(response: any, status: any, jqXHR: any) {
-        console.log(response);
-        if (response[0] === true) {
-          this_.inLoad = false;
-        } else {
-          this_.inLoad = false;
-        }
-      },
-      error: function(jqXHR: any, status: any, error: any) {
-        console.log('Error : ' + error );
-        this_.inLoad = false;
-      }
-    });
   }
 
   // END - Internal use funs
