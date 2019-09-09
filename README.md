@@ -1,6 +1,6 @@
-# Odoo Barcode
+# Odoo Barcode Wineem
 
-App for scan barcode with mobile and send it to Odoo Server, Android and iOS. Develop by [Moldeo Interactive](https://www.moldeointeractive.com.ar).
+App for scan barcode with mobile and send it to Odoo Server (Wineem), Android and iOS. Develop by [Moldeo Interactive](https://www.moldeointeractive.com.ar).
 
 Develop with Angular and Cordova.
 
