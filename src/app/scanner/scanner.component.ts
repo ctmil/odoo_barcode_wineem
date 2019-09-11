@@ -1,13 +1,5 @@
 import { Component, OnInit, OnChanges, Input, Output, EventEmitter } from '@angular/core';
 
-import { Product } from '../product';
-
-declare var jquery: any;
-declare var $: any;
-declare var navigator: any;
-declare var window: any;
-declare var cordova: any;
-
 @Component({
   selector: 'app-scanner',
   templateUrl: './scanner.component.html',
@@ -31,28 +23,9 @@ export class ScannerComponent implements OnInit, OnChanges {
   @Input('logged') logged = false;
   @Output() log = new EventEmitter();
   ////////////////////////////
-  public barcode = '';
-  public barcode_format = '';
-  public p_scanned = '';
-  public pr_scanned = '';
-  public showScann = false;
-  public showPPrice = false;
-  public showErr = false;
+  public showPicking = false;
+  public showStock = false;
   ////////////////////////////
-  public products: Product[] = [];
-  public selectedValue: number;
-  ////////////////////////////
-  public scanConfig = {
-    preferFrontCamera : false,    // iOS and Android
-    showFlipCameraButton : false, // iOS and Android
-    showTorchButton : true,       // iOS and Android
-    torchOn: false,               // Android, launch with the torch switched on (if available)
-    prompt : 'Place a barcode inside the scan area', // Android
-    resultDisplayDuration: 0,     // Time of show
-    orientation : 'portrait',     // Android only (portrait|landscape), default unset so it rotates with the device
-    disableAnimations : true,     // iOS
-    disableSuccessBeep: false     // iOS and Android
-  };
 
   constructor() { }
 
@@ -69,31 +42,12 @@ export class ScannerComponent implements OnInit, OnChanges {
 
   // Internal use funs
 
-  /* Scann Barcode Function */
-  public startScann(m: number): void {  // m: number = mode | 0 for Scann Barcode, 1 for get price
-    const this_ = this;
-    this.barcode = '';
-    this.barcode_format = '';
-    this.p_scanned = '';
-    this.pr_scanned = '';
-    this.showScann = false;
-    this.showPPrice = false;
-    this.showErr = false;
+  public picking(): void {
+    this.showPicking = true;
+  }
 
-    cordova.plugins.barcodeScanner.scan(
-      function (result: any) {
-        this_.barcode = result.text;
-        this_.barcode_format = result.format;
-        console.log('We got a barcode\n' +
-                    'Result: ' + result.text + '\n' +
-                    'Format: ' + result.format + '\n' +
-                    'Cancelled: ' + result.cancelled);
-      },
-      function (error: any) {
-        console.log('Scanning failed: ' + error);
-      },
-      this_.scanConfig
-   );
+  public stock(): void {
+    this.showStock = true;
   }
 
   // END - Internal use funs
