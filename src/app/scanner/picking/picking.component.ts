@@ -1,4 +1,5 @@
 import { Component, OnInit, OnChanges, Input, Output, EventEmitter } from '@angular/core';
+import { Picking } from '../../picking';
 
 declare var jquery: any;
 declare var $: any;
@@ -36,6 +37,8 @@ export class PickingComponent implements OnInit, OnChanges {
   public showScann = false;
   public showErr = false;
   ////////////////////////////
+  public pickings: Picking[] = [];
+  ////////////////////////////
   public scanConfig = {
     preferFrontCamera : false,    // iOS and Android
     showFlipCameraButton : false, // iOS and Android
@@ -52,7 +55,9 @@ export class PickingComponent implements OnInit, OnChanges {
 
   // Lifehooks funs
 
-  public ngOnInit(): void {}
+  public ngOnInit(): void {
+    this.getPicking(this.server, this.db, this.user, this.pass, this.uid);
+  }
 
   public ngOnChanges(): void {
 
@@ -85,6 +90,28 @@ export class PickingComponent implements OnInit, OnChanges {
       },
       this.scanConfig
    );
+  }
+
+  public getPicking(server_url: string, db: string, user: string, pass: string, uid: number): void {
+    $.xmlrpc({
+      url: server_url + '/object',
+      methodName: 'execute_kw',
+      crossDomain: true,
+      params: [db, uid, pass, 'stock.picking.order', 'search_read', [ [['state', '=', 'planned']] ], {'fields': ['name', 'id', 'state', 'move_ids'], 'limit': 5}],
+      success: (response: any, status: any, jqXHR: any) => {
+
+        for (let i = 0; i < response[0].length; i++) {
+	  for (let m = 0; m < response[0][i].move_ids.length; m++) {
+		console.log(response[0][i].move_ids[m]);
+	  }
+          this.pickings[i] = {name: response[0][i].name, id: response[0][i].id, state: response[0][i].state, move_ids: response[0][i].move_ids};
+        }
+        console.log(this.pickings);
+      },
+      error: (jqXHR: any, status: any, error: any) => {
+        console.log('Error : ' + error );
+      }
+    });
   }
 
   // END - Internal use funs
