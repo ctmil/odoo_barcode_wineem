@@ -97,14 +97,21 @@ export class PickingComponent implements OnInit, OnChanges {
       url: server_url + '/object',
       methodName: 'execute_kw',
       crossDomain: true,
-      params: [db, uid, pass, 'stock.picking.order', 'search_read', [ [['state', '=', 'planned']] ], {'fields': ['name', 'id', 'state', 'move_ids', 'rep'], 'limit': 5}],
+      params: [db, uid, pass, 'stock.picking.order', 'search_read', [ [['state', '=', 'planned']] ],
+      {'fields': ['name', 'id', 'move_ids', 'rep', 'leader'], 'limit': 10}],
       success: (response: any, status: any, jqXHR: any) => {
 
         for (let i = 0; i < response[0].length; i++) {
-	  for (let m = 0; m < response[0][i].move_ids.length; m++) {
-		console.log(response[0][i].move_ids[m]);
-	  }
-          this.pickings[i] = {name: response[0][i].name, id: response[0][i].id, rep: response[0][i].rep[1], move_ids: response[0][i].move_ids};
+          for (let m = 0; m < response[0][i].move_ids.length; m++) {
+            console.log(response[0][i].move_ids[m]);
+          }
+          this.pickings[i] = {
+            name: response[0][i].name,
+            id: response[0][i].id,
+            rep: response[0][i].rep[1],
+            leader: response[0][i].leader[1],
+            move_ids: response[0][i].move_ids
+          };
         }
         console.log(this.pickings);
       },
