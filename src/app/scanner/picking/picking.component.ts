@@ -100,7 +100,6 @@ export class PickingComponent implements OnInit, OnChanges {
       params: [db, uid, pass, 'stock.picking.order', 'search_read', [ [['state', '=', 'planned']] ],
       {'fields': ['name', 'id', 'move_ids', 'rep', 'leader'], 'limit': 10}],
       success: (response: any, status: any, jqXHR: any) => {
-
         for (let i = 0; i < response[0].length; i++) {
           for (let m = 0; m < response[0][i].move_ids.length; m++) {
             console.log(response[0][i].move_ids[m]);
@@ -114,6 +113,7 @@ export class PickingComponent implements OnInit, OnChanges {
           };
         }
         console.log(this.pickings);
+        console.log(this.groupBy(this.pickings, 'rep')); // Testing groupBy
       },
       error: (jqXHR: any, status: any, error: any) => {
         console.log('Error : ' + error );
@@ -122,5 +122,12 @@ export class PickingComponent implements OnInit, OnChanges {
   }
 
   // END - Internal use funs
+
+  public groupBy(xs, key): any {
+    return xs.reduce(function(rv, x) {
+      (rv[x[key]] = rv[x[key]] || []).push(x);
+      return rv;
+    }, {});
+  }
 
 }
