@@ -1,6 +1,6 @@
 export interface Picking {
     name: string;
     id: number;
-    state: string;
+    rep: string;
     move_ids?: any;
 }
