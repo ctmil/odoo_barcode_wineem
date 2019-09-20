@@ -1,4 +1,5 @@
 import { Component, OnInit, OnChanges, Input, Output, EventEmitter } from '@angular/core';
+import { ToolsService } from '../../service/tools.service';
 import { Picking } from '../../picking';
 
 declare var jquery: any;
@@ -57,7 +58,7 @@ export class PickingComponent implements OnInit, OnChanges {
     disableSuccessBeep: false     // iOS and Android
   };
 
-  constructor() { }
+  constructor(public t: ToolsService) { }
 
   // Lifehooks funs
 
@@ -118,13 +119,12 @@ export class PickingComponent implements OnInit, OnChanges {
             move_ids: response[0][i].move_ids
           };
         }
-        const reps = this.groupBy(this.pickings, 'rep');
+        const reps = this.t.groupBy(this.pickings, 'rep');
         const values = Object.values(reps);
         const keys = Object.keys(reps);
         for (let i = 0; i < keys.length; i++) {
           this.pickRep.push({name: keys[i], vals: values[i], id: i});
         }
-        console.log(this.pickRep);
       },
       error: (jqXHR: any, status: any, error: any) => {
         console.log('Error : ' + error );
@@ -135,7 +135,7 @@ export class PickingComponent implements OnInit, OnChanges {
   public readRep(n: number): void {
     this.showLeader = true;
     this.repSel = this.pickRep[n];
-    const leaders = this.groupBy(this.repSel.vals, 'leader');
+    const leaders = this.t.groupBy(this.repSel.vals, 'leader');
     const values = Object.values(leaders);
     const keys = Object.keys(leaders);
     for (let i = 0; i < keys.length; i++) {
@@ -145,22 +145,15 @@ export class PickingComponent implements OnInit, OnChanges {
         this.pickLeader.push({name: keys[i], vals: values[i], id: i});
       }
     }
-    console.log(this.pickLeader);
   }
 
   public readLeader(n: number): void {
     this.showOPs = true;
     this.leaderSel = this.pickLeader[n];
-    console.log(this.leaderSel);
   }
+
+  public readOP(): void {}
 
   // END - Internal use funs
-
-  public groupBy(xs, key): any {
-    return xs.reduce(function(rv, x) {
-      (rv[x[key]] = rv[x[key]] || []).push(x);
-      return rv;
-    }, {});
-  }
 
 }
