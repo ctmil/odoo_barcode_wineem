@@ -1,6 +1,6 @@
 <div *ngIf="!showLeader && !showOPs">
  <div *ngFor="let rep of pickRep" (click)="readRep(rep.id)">
-  <h4>{{rep.name}} ({{rep.vals.length}})</h4>
+  <h4>{{rep.name}} <small>({{rep.vals.length}})</small></h4>
   <hr>
  </div>
 </div>
@@ -9,7 +9,7 @@
   <h3 class="text-center">{{repSel.name}}</h3>
   <br>
   <div *ngFor="let leader of pickLeader" (click)="readLeader(leader.id)">
-    <h4>{{leader.name}} ({{leader.vals.length}})</h4>
+    <h4>{{leader.name}} <small>({{leader.vals.length}})</small></h4>
     <hr>
   </div>
 </div>
@@ -19,7 +19,7 @@
   <h3 class="text-center">{{leaderSel.name}}</h3>
   <br>
   <div *ngFor="let op of leaderSel.vals">
-    <h4>{{op.name}} ({{op.move_ids.length}})</h4>
+    <h4>{{op.name}} <small>({{op.move_ids.length}})</small></h4>
     <hr>
   </div> 
 </div>
