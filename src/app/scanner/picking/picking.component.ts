@@ -38,6 +38,8 @@ export class PickingComponent implements OnInit, OnChanges {
   public showScann = false;
   public showErr = false;
   ////////////////////////////
+  public loading = true;
+  ////////////////////////////
   public pickings: Picking[] = [];
   public pickRep = [];
   public repSel: any;
@@ -128,7 +130,9 @@ export class PickingComponent implements OnInit, OnChanges {
           for (let i = 0; i < keys.length; i++) {
             this.pickRep.push({name: keys[i], vals: values[i], id: i});
           }
+	  this.loading = false;
         } else {
+	  this.loading = false;
           this.alert = 'No hay pedidos planeados';
         }
       },

@@ -1,4 +1,8 @@
-<div *ngIf="!showLeader && !showOPs">
+<div *ngIf="loading">
+  <mat-progress-spinner mode="indeterminate" style="margin:0 auto;"></mat-progress-spinner>
+</div>
+
+<div *ngIf="!loading && !showLeader && !showOPs">
  <div *ngFor="let rep of pickRep" (click)="readRep(rep.id)">
   <h4>{{rep.name}} <small>({{rep.vals.length}})</small></h4>
   <hr>
@@ -6,7 +10,7 @@
  <p *ngIf="alert != ''">{{alert}}</p>
 </div>
 
-<div *ngIf="showLeader && !showOPs">
+<div *ngIf="!loading && showLeader && !showOPs">
   <h3 class="text-center">{{repSel.name}}</h3>
   <br>
   <div *ngFor="let leader of pickLeader" (click)="readLeader(leader.id)">
@@ -15,7 +19,7 @@
   </div>
 </div>
 
-<div *ngIf="showLeader && showOPs">
+<div *ngIf="!loading && showLeader && showOPs">
   <h3 class="text-center">{{repSel.name}}</h3>
   <h3 class="text-center">{{leaderSel.name}}</h3>
   <br>
