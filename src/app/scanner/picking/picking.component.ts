@@ -118,13 +118,13 @@ export class PickingComponent implements OnInit, OnChanges {
             move_ids: response[0][i].move_ids
           };
         }
-	const reps = this.groupBy(this.pickings, 'rep');
-	const values = Object.values(reps);
-	const keys = Object.keys(reps);
-	for (let i = 0; i < keys.length; i++) {
-		this.pickRep.push({name: keys[i], vals: values[i], id: i});
-	}
-	console.log(this.pickRep);
+        const reps = this.groupBy(this.pickings, 'rep');
+        const values = Object.values(reps);
+        const keys = Object.keys(reps);
+        for (let i = 0; i < keys.length; i++) {
+          this.pickRep.push({name: keys[i], vals: values[i], id: i});
+        }
+        console.log(this.pickRep);
       },
       error: (jqXHR: any, status: any, error: any) => {
         console.log('Error : ' + error );
@@ -133,25 +133,25 @@ export class PickingComponent implements OnInit, OnChanges {
   }
 
   public readRep(n: number): void {
-	this.showLeader = true;
-	this.selRep = this.pickRep[n];
-	const leaders = this.groupBy(this.selRep.vals, 'leader');
-	const values = Object.values(leaders);
-        const keys = Object.keys(leaders);
-        for (let i = 0; i < keys.length; i++) {
-		if (keys[i] == 'undefined') {
-		  this.pickLeader.push({name: 'Sin Lider', vals: values[i], id: i});
-		} else {
-                  this.pickLeader.push({name: keys[i], vals: values[i], id: i});
-		}
-        }
-	console.log(this.pickLeader);
+    this.showLeader = true;
+    this.repSel = this.pickRep[n];
+    const leaders = this.groupBy(this.repSel.vals, 'leader');
+    const values = Object.values(leaders);
+    const keys = Object.keys(leaders);
+    for (let i = 0; i < keys.length; i++) {
+      if (keys[i] === 'undefined') {
+        this.pickLeader.push({name: 'Sin Lider', vals: values[i], id: i});
+      } else {
+        this.pickLeader.push({name: keys[i], vals: values[i], id: i});
+      }
+    }
+    console.log(this.pickLeader);
   }
 
   public readLeader(n: number): void {
-	this.showOPs = true;
-	this.selLeader = this.pickLeader[n];
-	console.log(this.selLeader);
+    this.showOPs = true;
+    this.leaderSel = this.pickLeader[n];
+    console.log(this.leaderSel);
   }
 
   // END - Internal use funs
