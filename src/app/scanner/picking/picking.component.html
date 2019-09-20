@@ -3,29 +3,29 @@
 </div>
 
 <div *ngIf="!loading && !showLeader && !showOPs">
- <div *ngFor="let rep of pickRep" (click)="readRep(rep.id)">
+ <a href="#" class="d-block" *ngFor="let rep of pickRep" (click)="readRep(rep.id)">
   <h4>{{rep.name}} <small>({{rep.vals.length}})</small></h4>
   <hr>
- </div>
+ </a>
  <p *ngIf="alert != ''">{{alert}}</p>
 </div>
 
 <div *ngIf="!loading && showLeader && !showOPs">
   <h3 class="text-center">{{repSel.name}}</h3>
   <br>
-  <div *ngFor="let leader of pickLeader" (click)="readLeader(leader.id)">
+  <a href="#" class="d-block" *ngFor="let leader of pickLeader" (click)="readLeader(leader.id)">
     <h4>{{leader.name}} <small>({{leader.vals.length}})</small></h4>
     <hr>
-  </div>
+  </a>
 </div>
 
 <div *ngIf="!loading && showLeader && showOPs">
   <h3 class="text-center">{{repSel.name}}</h3>
   <h3 class="text-center">{{leaderSel.name}}</h3>
   <br>
-  <div *ngFor="let op of leaderSel.vals">
+  <a href="#" class="d-block" *ngFor="let op of leaderSel.vals" (click)="readOP(op.id)">
     <h4>{{op.name}} <small>({{op.move_ids.length}})</small></h4>
     <hr>
-  </div> 
+  </a> 
 </div>
 

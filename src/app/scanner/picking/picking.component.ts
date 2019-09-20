@@ -162,7 +162,10 @@ export class PickingComponent implements OnInit, OnChanges {
     this.leaderSel = this.pickLeader[n];
   }
 
-  public readOP(): void {}
+  public readOP(n: number): void {
+    const p = this.pickings.filter(obj => {return obj.id === n});
+    console.log(p);
+  }
 
   // END - Internal use funs
 
