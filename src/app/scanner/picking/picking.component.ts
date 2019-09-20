@@ -46,6 +46,8 @@ export class PickingComponent implements OnInit, OnChanges {
   public showOPs = false;
   public leaderSel: any;
   ////////////////////////////
+  public alert = '';
+  ////////////////////////////
   public scanConfig = {
     preferFrontCamera : false,    // iOS and Android
     showFlipCameraButton : false, // iOS and Android
@@ -107,23 +109,27 @@ export class PickingComponent implements OnInit, OnChanges {
       params: [db, uid, pass, 'stock.picking.order', 'search_read', [ [['state', '=', 'planned']] ],
       {'fields': ['name', 'id', 'move_ids', 'rep', 'leader'], 'limit': 10}],
       success: (response: any, status: any, jqXHR: any) => {
-        for (let i = 0; i < response[0].length; i++) {
-          /*for (let m = 0; m < response[0][i].move_ids.length; m++) {
-            console.log(response[0][i].move_ids[m]);
-          }*/
-          this.pickings[i] = {
-            name: response[0][i].name,
-            id: response[0][i].id,
-            rep: response[0][i].rep[1],
-            leader: response[0][i].leader[1],
-            move_ids: response[0][i].move_ids
-          };
-        }
-        const reps = this.t.groupBy(this.pickings, 'rep');
-        const values = Object.values(reps);
-        const keys = Object.keys(reps);
-        for (let i = 0; i < keys.length; i++) {
-          this.pickRep.push({name: keys[i], vals: values[i], id: i});
+        if (response) {
+          for (let i = 0; i < response[0].length; i++) {
+            /*for (let m = 0; m < response[0][i].move_ids.length; m++) {
+              console.log(response[0][i].move_ids[m]);
+            }*/
+            this.pickings[i] = {
+              name: response[0][i].name,
+              id: response[0][i].id,
+              rep: response[0][i].rep[1],
+              leader: response[0][i].leader[1],
+              move_ids: response[0][i].move_ids
+            };
+          }
+          const reps = this.t.groupBy(this.pickings, 'rep');
+          const values = Object.values(reps);
+          const keys = Object.keys(reps);
+          for (let i = 0; i < keys.length; i++) {
+            this.pickRep.push({name: keys[i], vals: values[i], id: i});
+          }
+        } else {
+          this.alert = 'No hay pedidos planeados';
         }
       },
       error: (jqXHR: any, status: any, error: any) => {

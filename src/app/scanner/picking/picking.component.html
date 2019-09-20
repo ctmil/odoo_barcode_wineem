@@ -3,6 +3,7 @@
   <h4>{{rep.name}} <small>({{rep.vals.length}})</small></h4>
   <hr>
  </div>
+ <p *ngIf="alert != ''">{{alert}}</p>
 </div>
 
 <div *ngIf="showLeader && !showOPs">
