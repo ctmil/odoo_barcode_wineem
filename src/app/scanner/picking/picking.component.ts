@@ -38,6 +38,8 @@ export class PickingComponent implements OnInit, OnChanges {
   public showScann = false;
   public showErr = false;
   ////////////////////////////
+  public loading = true;
+  ////////////////////////////
   public pickings: Picking[] = [];
   public pickRep = [];
   public repSel: any;
@@ -45,8 +47,10 @@ export class PickingComponent implements OnInit, OnChanges {
   public pickLeader = [];
   public showOPs = false;
   public leaderSel: any;
+  public showPicking = false;
   ////////////////////////////
   public alert = '';
+  public alertPicking = '';
   ////////////////////////////
   public scanConfig = {
     preferFrontCamera : false,    // iOS and Android
@@ -106,14 +110,14 @@ export class PickingComponent implements OnInit, OnChanges {
       url: server_url + '/object',
       methodName: 'execute_kw',
       crossDomain: true,
-      params: [db, uid, pass, 'stock.picking.order', 'search_read', [ [['state', '=', 'planned']] ],
+      params: [db, uid, pass, 'stock.picking.order', 'search_read', [ [/*['state', '=', 'planned']*/] ],
       {'fields': ['name', 'id', 'partner_id', 'move_ids', 'rep', 'leader'], 'limit': 10}],
       success: (response: any, status: any, jqXHR: any) => {
         if (response) {
           for (let i = 0; i < response[0].length; i++) {
             this.pickings[i] = {
               name: response[0][i].name,
-              customer: response[0][i].partner_id.id,
+              customer: response[0][i].partner_id,
               id: response[0][i].id,
               rep: response[0][i].rep[1],
               leader: response[0][i].leader[1],
@@ -126,7 +130,9 @@ export class PickingComponent implements OnInit, OnChanges {
           for (let i = 0; i < keys.length; i++) {
             this.pickRep.push({name: keys[i], vals: values[i], id: i});
           }
+            this.loading = false;
         } else {
+            this.loading = false;
           this.alert = 'No hay pedidos planeados';
         }
       },
@@ -156,7 +162,62 @@ export class PickingComponent implements OnInit, OnChanges {
     this.leaderSel = this.pickLeader[n];
   }
 
-  public readOP(): void {}
+  public readOP(n: number): void {
+    this.loading = true;
+
+    const p = this.pickings.filter(obj => {
+      return obj.id === n;
+    });
+
+    $.xmlrpc({
+      url: this.server + '/object',
+      methodName: 'execute_kw',
+      crossDomain: true,
+      params: [this.db, this.uid, this.pass, 'res.partner', 'search_read', [ [['id', '=', p[0].customer[0]]] ],
+      {'fields': ['name', 'id', 'parent_id', 'leader_id']}],
+      success: (response: any, status: any, jqXHR: any) => {
+        this.loading = false;
+        this.showPicking = true;
+        console.log(response);
+        if (response[0][0].leader_id !== false) {
+          $.xmlrpc({
+            url: this.server + '/object',
+            methodName: 'execute_kw',
+            crossDomain: true,
+            params: [this.db, this.uid, this.pass, 'stock.box', 'search_read',
+            [ [['state', '=', 'opened'], ['rep_id', '=', response[0][0].leader_id[0]]] ],
+            {'fields': ['name', 'id']}],
+            success: (rLeader: any, statusLead: any, jqXHRLead: any) => {
+              console.log('Leader: ', rLeader);
+            },
+            error: (jqXHRLead: any, statusLead: any, errorLead: any) => {
+              console.log('Error : ' + errorLead );
+            }
+          });
+        } else if (response[0][0].parent_id !== false) {
+          $.xmlrpc({
+            url: this.server + '/object',
+            methodName: 'execute_kw',
+            crossDomain: true,
+            params: [this.db, this.uid, this.pass, 'stock.box', 'search_read',
+            [ [['state', '=', 'opened'], ['rep_id', '=', response[0][0].leader_id[0]]] ],
+            {'fields': ['name', 'id']}],
+            success: (rRep: any, statusRep: any, jqXHRRep: any) => {
+              console.log('Rep: ', rRep);
+            },
+            error: (jqXHRLead: any, statusLead: any, errorLead: any) => {
+              console.log('Error : ' + errorLead );
+            }
+          });
+        } else {
+          this.alertPicking = 'No se puede procesar el pedido. Informar al cliente.';
+        }
+      },
+      error: (jqXHR: any, status: any, error: any) => {
+        console.log('Error : ' + error );
+      }
+    });
+  }
 
   // END - Internal use funs
 
