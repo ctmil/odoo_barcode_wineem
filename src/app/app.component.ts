@@ -39,8 +39,8 @@ export class AppComponent implements OnInit {
   public title = 'wineem';
   ////////////////////////////
   @ViewChild('form', {static: false}) form: ElementRef;
-  public server = 'http://181.111.252.90/xmlrpc/2';
-  public db = 'odoo_prod';
+  public server = 'http://34.216.25.62/xmlrpc/2';
+  public db = 'odoo_test';
   public user = '';
   public pass = '';
   public uid = 0;
