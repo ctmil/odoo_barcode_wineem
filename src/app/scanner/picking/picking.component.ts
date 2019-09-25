@@ -110,8 +110,8 @@ export class PickingComponent implements OnInit, OnChanges {
       url: server_url + '/object',
       methodName: 'execute_kw',
       crossDomain: true,
-      params: [db, uid, pass, 'stock.picking.order', 'search_read', [ [/*['state', '=', 'planned']*/] ],
-      {'fields': ['name', 'id', 'partner_id', 'move_ids', 'rep', 'leader'], 'limit': 10}],
+      params: [db, uid, pass, 'stock.picking.order', 'search_read', [ [['state', '=', 'draft']] ],
+      {'fields': ['name', 'id', 'partner_id', 'move_ids', 'rep', 'leader'], 'limit': 5}],
       success: (response: any, status: any, jqXHR: any) => {
         if (response) {
           for (let i = 0; i < response[0].length; i++) {
@@ -200,10 +200,13 @@ export class PickingComponent implements OnInit, OnChanges {
             methodName: 'execute_kw',
             crossDomain: true,
             params: [this.db, this.uid, this.pass, 'stock.box', 'search_read',
-            [ [['state', '=', 'opened'], ['rep_id', '=', response[0][0].leader_id[0]]] ],
+            [ [['state', '=', 'opened'], ['rep_id', '=', response[0][0].parent_id[0]]] ],
             {'fields': ['name', 'id']}],
             success: (rRep: any, statusRep: any, jqXHRRep: any) => {
               console.log('Rep: ', rRep);
+              if (rRep[0].length === 0) {
+                this.createBox(p);
+              }
             },
             error: (jqXHRLead: any, statusLead: any, errorLead: any) => {
               console.log('Error : ' + errorLead );
@@ -217,6 +220,10 @@ export class PickingComponent implements OnInit, OnChanges {
         console.log('Error : ' + error );
       }
     });
+  }
+
+  public createBox(picking: any): void {
+    console.log(picking);
   }
 
   // END - Internal use funs
