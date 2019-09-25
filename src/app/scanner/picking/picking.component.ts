@@ -125,7 +125,7 @@ export class PickingComponent implements OnInit, OnChanges {
             };
           }
           const reps = this.t.groupBy(this.pickings, 'rep');
-          const values = Object.values(reps);
+          const values = (<any>Object).values(reps);
           const keys = Object.keys(reps);
           for (let i = 0; i < keys.length; i++) {
             this.pickRep.push({name: keys[i], vals: values[i], id: i});
@@ -146,7 +146,7 @@ export class PickingComponent implements OnInit, OnChanges {
     this.showLeader = true;
     this.repSel = this.pickRep[n];
     const leaders = this.t.groupBy(this.repSel.vals, 'leader');
-    const values = Object.values(leaders);
+    const values = (<any>Object).values(leaders);
     const keys = Object.keys(leaders);
     for (let i = 0; i < keys.length; i++) {
       if (keys[i] === 'undefined') {
