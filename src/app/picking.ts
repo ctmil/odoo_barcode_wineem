@@ -2,7 +2,7 @@ export interface Picking {
     name: string;
     id: number;
     customer: any;
-    rep: string;
-    leader: string;
+    rep: any;
+    leader: any;
     move_ids?: any;
 }

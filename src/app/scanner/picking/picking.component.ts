@@ -48,6 +48,7 @@ export class PickingComponent implements OnInit, OnChanges {
   public showOPs = false;
   public leaderSel: any;
   public showPicking = false;
+  public box: any;
   ////////////////////////////
   public alert = '';
   public alertPicking = '';
@@ -119,8 +120,8 @@ export class PickingComponent implements OnInit, OnChanges {
               name: response[0][i].name,
               customer: response[0][i].partner_id,
               id: response[0][i].id,
-              rep: response[0][i].rep[1],
-              leader: response[0][i].leader[1],
+              rep: response[0][i].rep,
+              leader: response[0][i].leader,
               move_ids: response[0][i].move_ids
             };
           }
@@ -128,7 +129,7 @@ export class PickingComponent implements OnInit, OnChanges {
           const values = (<any>Object).values(reps);
           const keys = Object.keys(reps);
           for (let i = 0; i < keys.length; i++) {
-            this.pickRep.push({name: keys[i], vals: values[i], id: i});
+            this.pickRep.push({name: keys[i].split(',')[1], vals: values[i], id: i});
           }
             this.loading = false;
         } else {
@@ -149,10 +150,10 @@ export class PickingComponent implements OnInit, OnChanges {
     const values = (<any>Object).values(leaders);
     const keys = Object.keys(leaders);
     for (let i = 0; i < keys.length; i++) {
-      if (keys[i] === 'undefined') {
+      if (keys[i] === 'false') {
         this.pickLeader.push({name: 'Sin Lider', vals: values[i], id: i});
       } else {
-        this.pickLeader.push({name: keys[i], vals: values[i], id: i});
+        this.pickLeader.push({name: keys[i].split(',')[1], vals: values[i], id: i});
       }
     }
   }
@@ -186,9 +187,14 @@ export class PickingComponent implements OnInit, OnChanges {
             crossDomain: true,
             params: [this.db, this.uid, this.pass, 'stock.box', 'search_read',
             [ [['state', '=', 'opened'], ['rep_id', '=', response[0][0].leader_id[0]]] ],
-            {'fields': ['name', 'id']}],
+            {'fields': ['name', 'id', 'rep_id']}],
             success: (rLeader: any, statusLead: any, jqXHRLead: any) => {
               console.log('Leader: ', rLeader);
+              this.box = rLeader;
+              this.getBox(rLeader[0].id, p);
+              if (rLeader[0].length === 0) {
+                this.createBox(p);
+              }
             },
             error: (jqXHRLead: any, statusLead: any, errorLead: any) => {
               console.log('Error : ' + errorLead );
@@ -201,9 +207,11 @@ export class PickingComponent implements OnInit, OnChanges {
             crossDomain: true,
             params: [this.db, this.uid, this.pass, 'stock.box', 'search_read',
             [ [['state', '=', 'opened'], ['rep_id', '=', response[0][0].parent_id[0]]] ],
-            {'fields': ['name', 'id']}],
+            {'fields': ['name', 'id', 'rep_id']}],
             success: (rRep: any, statusRep: any, jqXHRRep: any) => {
               console.log('Rep: ', rRep);
+              this.box = rRep[0];
+              this.getBox(rRep[0][0].id, p);
               if (rRep[0].length === 0) {
                 this.createBox(p);
               }
@@ -224,6 +232,57 @@ export class PickingComponent implements OnInit, OnChanges {
 
   public createBox(picking: any): void {
     console.log(picking);
+
+    $.xmlrpc({
+      url: this.server + '/object',
+      methodName: 'execute_kw',
+      crossDomain: true,
+      params: [this.db, this.uid, this.pass, 'stock.box', 'create', [{
+        name: 'BOX-APP-' + Math.floor((Math.random()*50000)),
+        state: 'opened',
+        rep_id: picking[0].rep[0],
+      }]],
+      success: (res: any, status: any, jqXHR: any) => {
+        console.log(res);
+        this.getBox(res[0], picking);
+      },
+      error: (jqXHR: any, status: any, error: any) => {
+        console.log('Error : ' + error);
+      }
+    });
+  }
+
+  public getBox(id: number, picking: any): void {
+    console.log(id, picking[0]);
+
+    $.xmlrpc({
+      url: this.server + '/object',
+      methodName: 'execute_kw',
+      crossDomain: true,
+      params: [this.db, this.uid, this.pass, 'stock.picking.order', 'write',
+      [ [picking[0].id], {'box_id': id}]],
+      success: (res: any, status: any, jqXHR: any) => {
+        console.log(res);
+      },
+      error: (jqXHR: any, status: any, error: any) => {
+        console.log('Error : ' + error );
+      }
+    });
+
+    $.xmlrpc({
+      url: this.server + '/object',
+      methodName: 'execute_kw',
+      crossDomain: true,
+      params: [this.db, this.uid, this.pass, 'stock.box', 'search_read',
+      [ [['id', '=', id]] ],
+      {'fields': ['name', 'id', 'rep_id']}],
+      success: (res: any, status: any, jqXHR: any) => {
+        this.box = res[0];
+      },
+      error: (jqXHR: any, status: any, error: any) => {
+        console.log('Error : ' + error );
+      }
+    });
   }
 
   // END - Internal use funs
