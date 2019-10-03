@@ -49,6 +49,7 @@ export class PickingComponent implements OnInit, OnChanges {
   public leaderSel: any;
   public showPicking = false;
   public box: any;
+  public pTable = [];
   ////////////////////////////
   public alert = '';
   public alertPicking = '';
@@ -190,10 +191,11 @@ export class PickingComponent implements OnInit, OnChanges {
             {'fields': ['name', 'id', 'rep_id']}],
             success: (rLeader: any, statusLead: any, jqXHRLead: any) => {
               console.log('Leader: ', rLeader);
-              this.box = rLeader;
-              this.getBox(rLeader[0].id, p);
+              //this.box = rLeader;
               if (rLeader[0].length === 0) {
                 this.createBox(p);
+              } else {
+                this.getBox(rLeader[0][0].id, p);
               }
             },
             error: (jqXHRLead: any, statusLead: any, errorLead: any) => {
@@ -210,10 +212,11 @@ export class PickingComponent implements OnInit, OnChanges {
             {'fields': ['name', 'id', 'rep_id']}],
             success: (rRep: any, statusRep: any, jqXHRRep: any) => {
               console.log('Rep: ', rRep);
-              this.box = rRep[0];
-              this.getBox(rRep[0][0].id, p);
+              //this.box = rRep[0];
               if (rRep[0].length === 0) {
                 this.createBox(p);
+              } else {
+                this.getBox(rRep[0][0].id, p);
               }
             },
             error: (jqXHRLead: any, statusLead: any, errorLead: any) => {
@@ -231,8 +234,6 @@ export class PickingComponent implements OnInit, OnChanges {
   }
 
   public createBox(picking: any): void {
-    console.log(picking);
-
     $.xmlrpc({
       url: this.server + '/object',
       methodName: 'execute_kw',
@@ -253,7 +254,7 @@ export class PickingComponent implements OnInit, OnChanges {
   }
 
   public getBox(id: number, picking: any): void {
-    console.log(id, picking[0]);
+    console.log("Picking: ", picking[0]);
 
     $.xmlrpc({
       url: this.server + '/object',
@@ -283,6 +284,48 @@ export class PickingComponent implements OnInit, OnChanges {
         console.log('Error : ' + error );
       }
     });
+
+    for (const move of picking[0].move_ids) {
+      let categ = '';
+      let default_code = '';
+      let qty = 0;
+      let ean13 = 0;
+
+      $.xmlrpc({
+        url: this.server + '/object',
+        methodName: 'execute_kw',
+        crossDomain: true,
+        params: [this.db, this.uid, this.pass, 'stock.move', 'search_read',
+        [ [['id', '=', move]] ],
+        {'fields': ['product_id', 'product_uom_qty']}],
+        success: (res: any, status: any, jqXHR: any) => {
+          qty = res[0][0].product_uom_qty;
+
+          $.xmlrpc({
+            url: this.server + '/object',
+            methodName: 'execute_kw',
+            crossDomain: true,
+            params: [this.db, this.uid, this.pass, 'product.product', 'search_read',
+            [ [['id', '=', res[0][0].product_id[0]]] ],
+            {'fields': ['default_code', 'categ_id', 'ean13']}],
+            success: (resP: any, statusP: any, jqXHRP: any) => {
+              categ = resP[0][0].categ_id[1];
+              default_code = resP[0][0].default_code;
+              ean13 = resP[0][0].ean13;
+
+              this.pTable.push({categ_id: categ.slice(0, 5), sku: default_code, qty: qty, ean13: ean13});
+            },
+            error: (jqXHRP: any, statusP: any, errorP: any) => {
+              console.log('Error : ' + errorP );
+            }
+          });
+        },
+        error: (jqXHR: any, status: any, error: any) => {
+          console.log('Error : ' + error );
+        }
+      });
+    }
+    console.log('Tabla:', this.pTable);
   }
 
   // END - Internal use funs
