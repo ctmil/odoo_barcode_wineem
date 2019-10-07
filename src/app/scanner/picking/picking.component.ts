@@ -328,6 +328,21 @@ export class PickingComponent implements OnInit, OnChanges {
     console.log('Tabla:', this.pTable);
   }
 
+  public getReportTag(id: number) {
+    $.xmlrpc({
+      url: this.server + '/report',
+      methodName: 'render_report',
+      crossDomain: true,
+      params: [this.db, this.uid, this.pass, 'uniqs_box_label_2.print', [ id ]],
+      success: (response: any, status: any, jqXHR: any) => {
+        console.log(response);
+      },
+      error: (jqXHR: any, status: any, error: any) => {
+        console.log('Error : ' + error );
+      }
+    });
+  }
+
   // END - Internal use funs
 
 }
