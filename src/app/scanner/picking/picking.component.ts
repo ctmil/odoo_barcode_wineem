@@ -49,6 +49,7 @@ export class PickingComponent implements OnInit, OnChanges {
   public leaderSel: any;
   public showPicking = false;
   public box: any;
+  public selP: any;
   public pTable = [];
   ////////////////////////////
   public alert = '';
@@ -170,6 +171,8 @@ export class PickingComponent implements OnInit, OnChanges {
     const p = this.pickings.filter(obj => {
       return obj.id === n;
     });
+
+    this.selP = p;
 
     $.xmlrpc({
       url: this.server + '/object',
