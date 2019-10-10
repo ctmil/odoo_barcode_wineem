@@ -194,7 +194,7 @@ export class PickingComponent implements OnInit, OnChanges {
             {'fields': ['name', 'id', 'rep_id']}],
             success: (rLeader: any, statusLead: any, jqXHRLead: any) => {
               console.log('Leader: ', rLeader);
-              //this.box = rLeader;
+              // this.box = rLeader;
               if (rLeader[0].length === 0) {
                 this.createBox(p);
               } else {
@@ -215,7 +215,7 @@ export class PickingComponent implements OnInit, OnChanges {
             {'fields': ['name', 'id', 'rep_id']}],
             success: (rRep: any, statusRep: any, jqXHRRep: any) => {
               console.log('Rep: ', rRep);
-              //this.box = rRep[0];
+              // this.box = rRep[0];
               if (rRep[0].length === 0) {
                 this.createBox(p);
               } else {
@@ -242,7 +242,7 @@ export class PickingComponent implements OnInit, OnChanges {
       methodName: 'execute_kw',
       crossDomain: true,
       params: [this.db, this.uid, this.pass, 'stock.box', 'create', [{
-        name: 'BOX-APP-' + Math.floor((Math.random()*50000)),
+        name: 'BOX-APP-' + Math.floor((Math.random() * 50000)),
         state: 'opened',
         rep_id: picking[0].rep[0],
       }]],
@@ -257,7 +257,7 @@ export class PickingComponent implements OnInit, OnChanges {
   }
 
   public getBox(id: number, picking: any): void {
-    console.log("Picking: ", picking[0]);
+    console.log('Picking: ', picking[0]);
 
     $.xmlrpc({
       url: this.server + '/object',
@@ -310,13 +310,31 @@ export class PickingComponent implements OnInit, OnChanges {
             crossDomain: true,
             params: [this.db, this.uid, this.pass, 'product.product', 'search_read',
             [ [['id', '=', res[0][0].product_id[0]]] ],
-            {'fields': ['default_code', 'categ_id', 'ean13']}],
+            {'fields': ['default_code', 'channel_id', 'ean13']}],
             success: (resP: any, statusP: any, jqXHRP: any) => {
-              categ = resP[0][0].categ_id[1];
               default_code = resP[0][0].default_code;
               ean13 = resP[0][0].ean13;
 
-              this.pTable.push({categ_id: categ.slice(0, 5), sku: default_code, qty: qty, ean13: ean13});
+              if (resP[0][0].channel_id) {
+                $.xmlrpc({
+                  url: this.server + '/object',
+                  methodName: 'execute_kw',
+                  crossDomain: true,
+                  params: [this.db, this.uid, this.pass, 'product.channel', 'search_read',
+                  [ [['id', '=', resP[0][0].channel_id[0]]] ],
+                  {'fields': ['short_name']}],
+                  success: (resC: any, statusC: any, jqXHRC: any) => {
+                    categ = resC[0][0].short_name;
+                    this.pTable.push({categ_id: categ, sku: default_code, qty: qty, ean13: ean13});
+                  },
+                  error: (jqXHRC: any, statusC: any, errorC: any) => {
+                    console.log('Error : ' + errorC );
+                  }
+                });
+              } else {
+                categ = 'NO-CAT';
+                this.pTable.push({categ_id: categ, sku: default_code, qty: qty, ean13: ean13});
+              }
             },
             error: (jqXHRP: any, statusP: any, errorP: any) => {
               console.log('Error : ' + errorP );

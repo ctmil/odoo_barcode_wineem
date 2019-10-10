@@ -31,8 +31,8 @@
 
 <div *ngIf="!loading && showLeader && showOPs && showPicking">
   <p *ngIf="alertPicking != ''">{{alertPicking}}</p>
-  <h2 *ngIf="selP">{{selP[0].name}}</h2>
-  <h3 *ngIf="box != undefined">{{box[0].name}}</h3>
+  <h4 *ngIf="selP">{{selP[0].name}}</h4>
+  <h4 *ngIf="box != undefined">{{box[0].name}}</h4>
   <h5 *ngIf="box != undefined">Representante / Líder: {{box[0].rep_id[1]}}</h5>
   <br />
   <div *ngIf="box != undefined">
