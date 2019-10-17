@@ -31,20 +31,32 @@
 
 <div *ngIf="!loading && showLeader && showOPs && showPicking">
   <p *ngIf="alertPicking != ''">{{alertPicking}}</p>
-  <h4 *ngIf="selP">{{selP[0].name}}</h4>
-  <h4 *ngIf="box != undefined">{{box[0].name}}</h4>
-  <h5 *ngIf="box != undefined">Representante / Líder: {{box[0].rep_id[1]}}</h5>
-  <br />
-  <div *ngIf="box != undefined">
-      <div class="row mb-2 over-table">
-          <div class="col-4">Categoría</div>
-          <div class="col-4">SKU</div>
-          <div class="col-4 text-right">Cantidad</div>
-      </div>
-      <div class="row" *ngFor="let p of pTable">
-        <div class="col-4 text-uppercase text-center">{{p.categ_id}}</div>
-        <div class="col-4 text-center">{{p.sku}}</div>
-        <div class="col-4 text-right">{{p.qty}}</div>
+  <div *ngIf="alertPicking == 'Ya hay una caja abierta por otro Usuario.'">
+      <button class="b_raised" mat-raised-button color="accent" (click)="createBox(selP)">Crear caja</button>
+      <button class="b_raised" mat-raised-button color="accent" (click)="alertPicking = '';">Usar de todas formas</button>
+  </div>
+
+  <div *ngIf="alertPicking != 'Ya hay una caja abierta por otro Usuario.'">
+      <h5 *ngIf="selP">{{selP[0].name}}</h5>
+      <h5 *ngIf="box != undefined">{{box[0].name}}</h5>
+      <h6 *ngIf="box != undefined">Representante / Líder: {{box[0].rep_id[1]}}</h6>
+      <br />
+      <div *ngIf="box != undefined">
+          <div class="row mb-2 over-table">
+              <div class="col-3">Categ.</div>
+              <div class="col-3">SKU</div>
+              <div class="col-3 text-right">Cant.</div>
+              <div class="col-3 text-right">Scan</div>
+          </div>
+          <div class="row" *ngFor="let p of pTable;index as i;">
+            <div class="col-3 text-uppercase text-center">{{p.categ_id}}</div>
+            <div class="col-3 text-center">{{p.sku}}</div>
+            <div class="col-3 text-right">{{p.qty}}</div>
+            <div class="col-3 text-right">
+              <button mat-raised-button *ngIf="p.scan == false" style="background:#ff0000;">NO</button>
+              <button mat-raised-button *ngIf="p.scan == true" style="background:#00ff00;">OK</button>
+            </div>
+          </div>
       </div>
   </div>
 </div>

@@ -282,11 +282,11 @@ export class PickingComponent implements OnInit, OnChanges {
       {'fields': ['name', 'id', 'rep_id', 'create_uid']}],
       success: (res: any, status: any, jqXHR: any) => {
         console.log(res);
-        /*if (res[0][0].create_uid !== this.uid) {
-
+        if (res[0][0].create_uid[0] !== this.uid) {
+          this.alertPicking = 'Ya hay una caja abierta por otro Usuario.';
         } else {
           this.box = res[0];
-        }*/
+        }
       },
       error: (jqXHR: any, status: any, error: any) => {
         console.log('Error : ' + error );
@@ -330,7 +330,7 @@ export class PickingComponent implements OnInit, OnChanges {
                   {'fields': ['short_name']}],
                   success: (resC: any, statusC: any, jqXHRC: any) => {
                     categ = resC[0][0].short_name;
-                    this.pTable.push({categ_id: categ, sku: default_code, qty: qty, ean13: ean13});
+                    this.pTable.push({categ_id: categ, sku: default_code, qty: qty, ean13: ean13, scan: false});
                   },
                   error: (jqXHRC: any, statusC: any, errorC: any) => {
                     console.log('Error : ' + errorC );
@@ -338,7 +338,7 @@ export class PickingComponent implements OnInit, OnChanges {
                 });
               } else {
                 categ = 'NO-CAT';
-                this.pTable.push({categ_id: categ, sku: default_code, qty: qty, ean13: ean13});
+                this.pTable.push({categ_id: categ, sku: default_code, qty: qty, ean13: ean13, scan: false});
               }
             },
             error: (jqXHRP: any, statusP: any, errorP: any) => {
