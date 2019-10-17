@@ -279,9 +279,14 @@ export class PickingComponent implements OnInit, OnChanges {
       crossDomain: true,
       params: [this.db, this.uid, this.pass, 'stock.box', 'search_read',
       [ [['id', '=', id]] ],
-      {'fields': ['name', 'id', 'rep_id']}],
+      {'fields': ['name', 'id', 'rep_id', 'create_uid']}],
       success: (res: any, status: any, jqXHR: any) => {
-        this.box = res[0];
+        console.log(res);
+        /*if (res[0][0].create_uid !== this.uid) {
+
+        } else {
+          this.box = res[0];
+        }*/
       },
       error: (jqXHR: any, status: any, error: any) => {
         console.log('Error : ' + error );
