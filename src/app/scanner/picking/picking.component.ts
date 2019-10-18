@@ -361,7 +361,17 @@ export class PickingComponent implements OnInit, OnChanges {
       crossDomain: true,
       params: [this.db, this.uid, this.pass, 'uniqs_box_label_2.print', [ id ]],
       success: (response: any, status: any, jqXHR: any) => {
-        console.log(response);
+        // console.log(response[0].result);
+        let element = document.createElement('a');
+        element.setAttribute('href', 'data:application/pdf;base64,' + encodeURIComponent(response[0].result));
+        element.setAttribute('download', 'nombre.pdf');
+
+        element.style.display = 'none';
+        document.body.appendChild(element);
+
+        element.click();
+
+        document.body.removeChild(element);
       },
       error: (jqXHR: any, status: any, error: any) => {
         console.log('Error : ' + error );
