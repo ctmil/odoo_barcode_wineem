@@ -53,11 +53,12 @@
             <div class="col-3 text-center">{{p.sku}}</div>
             <div class="col-3 text-right">{{p.qty}}</div>
             <div class="col-3 text-right">
-              <button mat-raised-button *ngIf="p.scan == false" style="background:#ff0000;">NO</button>
-              <button mat-raised-button *ngIf="p.scan == true" style="background:#00ff00;">OK</button>
+              <button mat-raised-button *ngIf="p.scan == false" style="background:#ff0000;" (click)="startScann(i)">NO ({{p.scan_qty}})</button>
+              <button mat-raised-button *ngIf="p.scan == true" style="background:#00ff00;" (click)="startScann(i)">OK ({{p.scan_qty}})</button>
             </div>
           </div>
       </div>
+      <button mat-raised-button class="b_raised mt-4" mat-raised-button color="accent" (click)="validatePicking()">Confirmar Pedido</button>
   </div>
 </div>
 

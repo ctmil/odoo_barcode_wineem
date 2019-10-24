@@ -84,28 +84,42 @@ export class PickingComponent implements OnInit, OnChanges {
   // Internal use funs
 
   /* Scann Barcode Function */
-  public startScann(): void {
-    this.barcode = '';
-    this.barcode_format = '';
-    this.p_scanned = '';
-    this.pr_scanned = '';
-    this.showScann = false;
-    this.showErr = false;
+  public startScann(i: number): void {
+    if (this.pTable[i].scan === false) {
+      if (this.pTable[i].ean13 !== false) {
+        this.barcode = '';
+        this.barcode_format = '';
+        this.p_scanned = '';
+        this.pr_scanned = '';
+        this.showScann = false;
+        this.showErr = false;
 
-    cordova.plugins.barcodeScanner.scan(
-      (result: any) => {
-        this.barcode = result.text;
-        this.barcode_format = result.format;
-        console.log('We got a barcode\n' +
-                    'Result: ' + result.text + '\n' +
-                    'Format: ' + result.format + '\n' +
-                    'Cancelled: ' + result.cancelled);
-      },
-      function (error: any) {
-        console.log('Scanning failed: ' + error);
-      },
-      this.scanConfig
-   );
+        cordova.plugins.barcodeScanner.scan(
+          (result: any) => {
+            this.barcode = result.text;
+            this.barcode_format = result.format;
+            console.log('We got a barcode\n' +
+                        'Result: ' + result.text + '\n' +
+                        'Format: ' + result.format + '\n' +
+                        'Cancelled: ' + result.cancelled);
+            if (this.pTable[i].ean13 === result.text) {
+              this.pTable[i].scan_qty = this.pTable[i].scan_qty + 1;
+              if (this.pTable[i].scan_qty === this.pTable[i].qty) {
+                this.pTable[i].scan = true;
+              }
+            }
+          },
+          function (error: any) {
+            console.log('Scanning failed: ' + error);
+          },
+          this.scanConfig
+        );
+      } else {
+        alert('Este producto no tiene código de Barra cargado');
+      }
+    } else {
+      alert('Producto ya escaneado');
+    }
   }
 
   public getPicking(server_url: string, db: string, user: string, pass: string, uid: number): void {
@@ -298,6 +312,7 @@ export class PickingComponent implements OnInit, OnChanges {
       let default_code = '';
       let qty = 0;
       let ean13 = 0;
+      let id = 0;
 
       $.xmlrpc({
         url: this.server + '/object',
@@ -315,10 +330,11 @@ export class PickingComponent implements OnInit, OnChanges {
             crossDomain: true,
             params: [this.db, this.uid, this.pass, 'product.product', 'search_read',
             [ [['id', '=', res[0][0].product_id[0]]] ],
-            {'fields': ['default_code', 'channel_id', 'ean13']}],
+            {'fields': ['id', 'default_code', 'channel_id', 'ean13']}],
             success: (resP: any, statusP: any, jqXHRP: any) => {
               default_code = resP[0][0].default_code;
               ean13 = resP[0][0].ean13;
+              id = resP[0][0].id;
 
               if (resP[0][0].channel_id) {
                 $.xmlrpc({
@@ -330,7 +346,7 @@ export class PickingComponent implements OnInit, OnChanges {
                   {'fields': ['short_name']}],
                   success: (resC: any, statusC: any, jqXHRC: any) => {
                     categ = resC[0][0].short_name;
-                    this.pTable.push({categ_id: categ, sku: default_code, qty: qty, ean13: ean13, scan: false});
+                    this.pTable.push({id: id, categ_id: categ, sku: default_code, qty: qty, ean13: ean13, scan: false, scan_qty: 0});
                   },
                   error: (jqXHRC: any, statusC: any, errorC: any) => {
                     console.log('Error : ' + errorC );
@@ -338,7 +354,7 @@ export class PickingComponent implements OnInit, OnChanges {
                 });
               } else {
                 categ = 'NO-CAT';
-                this.pTable.push({categ_id: categ, sku: default_code, qty: qty, ean13: ean13, scan: false});
+                this.pTable.push({id: id, categ_id: categ, sku: default_code, qty: qty, ean13: ean13, scan: false, scan_qty: 0});
               }
             },
             error: (jqXHRP: any, statusP: any, errorP: any) => {
@@ -354,6 +370,23 @@ export class PickingComponent implements OnInit, OnChanges {
     console.log('Tabla:', this.pTable);
   }
 
+  public validatePicking() {
+    let isScan = false;
+
+    /*for (const obj of this.pTable) {
+      if (obj.scan === true) {
+        isScan = true;
+      }  
+    }
+
+    if (isScan === false) {
+      alert('No hay productos escaneados');
+    } else {
+
+    }*/
+    console.log('Caja ID: ', this.box[0].id);
+  }
+
   public getReportTag(id: number) {
     $.xmlrpc({
       url: this.server + '/report',
@@ -361,7 +394,6 @@ export class PickingComponent implements OnInit, OnChanges {
       crossDomain: true,
       params: [this.db, this.uid, this.pass, 'uniqs_box_label_2.print', [ id ]],
       success: (response: any, status: any, jqXHR: any) => {
-        // console.log(response[0].result);
         let element = document.createElement('a');
         element.setAttribute('href', 'data:application/pdf;base64,' + encodeURIComponent(response[0].result));
         element.setAttribute('download', 'nombre.pdf');
