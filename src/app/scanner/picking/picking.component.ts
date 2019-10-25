@@ -405,6 +405,7 @@ export class PickingComponent implements OnInit, OnChanges {
         }]],
         success: (response: any, status: any, jqXHR: any) => {
           console.log('Stock Box:', response);
+          alert('Productos Cargados en Caja ' + this.box[0].name);
         },
         error: (jqXHR: any, status: any, error: any) => {
           console.log('Error : ' + error );
