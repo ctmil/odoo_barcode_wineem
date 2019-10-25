@@ -372,8 +372,22 @@ export class PickingComponent implements OnInit, OnChanges {
 
   public validatePicking() {
     let isScan = false;
+    let list = [];
+    let plist = [];
 
-    /*for (const obj of this.pTable) {
+    for (const p of this.pTable) {
+      if (p.scan === true) {
+        list.push(p.id);
+      }
+    }
+
+    for (const p of this.pTable) {
+      if (p.scan === false) {
+        plist.push(p.id);
+      }
+    }
+
+    for (const obj of this.pTable) {
       if (obj.scan === true) {
         isScan = true;
       }  
@@ -382,9 +396,40 @@ export class PickingComponent implements OnInit, OnChanges {
     if (isScan === false) {
       alert('No hay productos escaneados');
     } else {
+      $.xmlrpc({
+        url: this.server + '/object',
+        methodName: 'execute_kw',
+        crossDomain: true,
+        params: [this.db, this.uid, this.pass, 'stock.box', 'write', [ [this.box[0].id], {
+          pickings_ids: [[6, 0, list]]
+        }]],
+        success: (response: any, status: any, jqXHR: any) => {
+          console.log('Stock Box:', response);
+        },
+        error: (jqXHR: any, status: any, error: any) => {
+          console.log('Error : ' + error );
+        }
+      });
 
-    }*/
-    console.log('Caja ID: ', this.box[0].id);
+      if (plist.length > 0) {
+        $.xmlrpc({
+          url: this.server + '/object',
+          methodName: 'execute_kw',
+          crossDomain: true,
+          params: [this.db, this.uid, this.pass, 'stock.picking', 'create', [{
+            picking_type_id: 2,
+            backorder_id: this.pTable[0].id,
+            move_lines: [[6, 0, plist]]
+          }]],
+          success: (response: any, status: any, jqXHR: any) => {
+            console.log('Picking:', response);
+          },
+          error: (jqXHR: any, status: any, error: any) => {
+            console.log('Error : ' + error );
+          }
+        });
+      }
+    }
   }
 
   public getReportTag(id: number) {
