@@ -2,7 +2,7 @@
   <mat-progress-spinner mode="indeterminate" style="margin:0 auto;"></mat-progress-spinner>
 </div>
 
-<div *ngIf="!loading && !showLeader && !showOPs && !showPicking">
+<div *ngIf="!loading && !showLeader && !showOPs && !showPicking && !showClose">
  <a class="d-block" *ngFor="let rep of pickRep" (click)="readRep(rep.id)">
   <h4>{{rep.name}} <small>({{rep.vals.length}})</small></h4>
   <hr>
@@ -10,7 +10,7 @@
  <p *ngIf="alert != ''">{{alert}}</p>
 </div>
 
-<div *ngIf="!loading && showLeader && !showOPs && !showPicking">
+<div *ngIf="!loading && showLeader && !showOPs && !showPicking && !showClose">
   <h3 class="text-center">{{repSel.name}}</h3>
   <br>
   <a class="d-block" *ngFor="let leader of pickLeader" (click)="readLeader(leader.id)">
@@ -19,7 +19,7 @@
   </a>
 </div>
 
-<div *ngIf="!loading && showLeader && showOPs && !showPicking">
+<div *ngIf="!loading && showLeader && showOPs && !showPicking && !showClose">
   <h3 class="text-center">{{repSel.name}}</h3>
   <h3 class="text-center">{{leaderSel.name}}</h3>
   <br>
@@ -29,7 +29,7 @@
   </a> 
 </div>
 
-<div *ngIf="!loading && showLeader && showOPs && showPicking">
+<div *ngIf="!loading && showLeader && showOPs && showPicking && !showClose">
   <p *ngIf="alertPicking != ''">{{alertPicking}}</p>
   <div *ngIf="alertPicking == 'Ya hay una caja abierta por otro Usuario.'">
       <button class="b_raised" mat-raised-button color="accent" (click)="createBox(selP)">Crear caja</button>
@@ -52,13 +52,21 @@
             <div class="col-3 text-uppercase text-center">{{p.categ_id}}</div>
             <div class="col-3 text-center">{{p.sku}}</div>
             <div class="col-3 text-right">{{p.qty}}</div>
-            <div class="col-3 text-right">
+            <div class="col-3 text-right" *ngIf="p.ean13 != ''">
               <button mat-raised-button *ngIf="p.scan == false" style="background:#ff0000;" (click)="startScann(i)">NO ({{p.scan_qty}})</button>
               <button mat-raised-button *ngIf="p.scan == true" style="background:#00ff00;" (click)="startScann(i)">OK ({{p.scan_qty}})</button>
+            </div>
+            <div class="col-3 text-right" *ngIf="p.ean13 == ''">
+                <button mat-raised-button (click)="addQty(i)">({{p.scan_qty}}) +</button>
             </div>
           </div>
       </div>
       <button mat-raised-button class="b_raised mt-4" mat-raised-button color="accent" (click)="validatePicking()">Confirmar Pedido</button>
+      <button mat-raised-button class="b_raised mt-4" mat-raised-button color="accent" (click)="closeBoxes()">Cerrar Cajas</button>
   </div>
+</div>
+
+<div *ngIf="!loading && showLeader && showOPs && showPicking && showClose">
+    <h5>Cerrar Cajas</h5>
 </div>
 

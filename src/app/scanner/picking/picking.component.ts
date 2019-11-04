@@ -51,6 +51,7 @@ export class PickingComponent implements OnInit, OnChanges {
   public box: any;
   public selP: any;
   public pTable = [];
+  public showClose = false;
   ////////////////////////////
   public alert = '';
   public alertPicking = '';
@@ -370,6 +371,13 @@ export class PickingComponent implements OnInit, OnChanges {
     console.log('Tabla:', this.pTable);
   }
 
+  public addQty(i: number){
+    if (this.pTable[i].scan_qty < this.pTable[i].qty) {
+      this.pTable[i].scan = true;
+      this.pTable[i].scan_qty++;
+    }
+  }
+
   public validatePicking() {
     let isScan = false;
     let list = [];
@@ -431,6 +439,10 @@ export class PickingComponent implements OnInit, OnChanges {
         });
       }
     }
+  }
+
+  public closeBoxes() {
+    this.showClose = true;
   }
 
   public getReportTag(id: number) {
