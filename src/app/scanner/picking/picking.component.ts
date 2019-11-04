@@ -382,24 +382,18 @@ export class PickingComponent implements OnInit, OnChanges {
   public validatePicking() {
     let isScan = false;
     let list = [];
+    let ilist = [];
     let plist = [];
 
     for (const p of this.pTable) {
       if (p.scan === true) {
-        list.push(p.id);
-      }
-    }
-
-    for (const p of this.pTable) {
-      if (p.scan === false) {
+        isScan = true;
+        if (p.qty === p.scan_qty) {
+          list.push(p.id);
+        }
+      } else {
         plist.push(p.id);
       }
-    }
-
-    for (const obj of this.pTable) {
-      if (obj.scan === true) {
-        isScan = true;
-      }  
     }
 
     if (isScan === false) {
