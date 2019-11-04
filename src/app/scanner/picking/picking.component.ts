@@ -52,6 +52,7 @@ export class PickingComponent implements OnInit, OnChanges {
   public selP: any;
   public pTable = [];
   public showClose = false;
+  public pBoxes = [];
   ////////////////////////////
   public alert = '';
   public alertPicking = '';
@@ -443,6 +444,43 @@ export class PickingComponent implements OnInit, OnChanges {
 
   public closeBoxes() {
     this.showClose = true;
+
+    $.xmlrpc({
+      url: this.server + '/object',
+      methodName: 'execute_kw',
+      crossDomain: true,
+      params: [this.db, this.uid, this.pass, 'stock.box', 'search_read',
+      [ [['create_uid', '=', this.uid], ['state', '=', 'opened']] ],
+      {'fields': ['name', 'id', 'rep_id']}],
+      success: (res: any, status: any, jqXHR: any) => {
+        console.log('BOXES:', res[0]);
+        for (let i = 0; i < res[0].length; i++) {
+          this.pBoxes.push({id: res[0][i].id, name: res[0][i].name, rep: res[0][i].rep_id[1], state: 'Abierta'});
+        }
+      },
+      error: (jqXHR: any, status: any, error: any) => {
+        console.log('Error : ' + error );
+      }
+    });
+  }
+
+  public closeBox(id: number, i: number) {
+    $.xmlrpc({
+      url: this.server + '/object',
+      methodName: 'execute_kw',
+      crossDomain: true,
+      params: [this.db, this.uid, this.pass, 'stock.box', 'write', [ [id], {
+        state: 'closed'
+      }]],
+      success: (response: any, status: any, jqXHR: any) => {
+        console.log('Stock Box:', response);
+        this.pBoxes[i].state = 'Cerrada';
+      },
+      error: (jqXHR: any, status: any, error: any) => {
+        console.log('Error : ' + error );
+        alert('La Caja no se puede Cerrar');
+      }
+    });
   }
 
   public getReportTag(id: number) {

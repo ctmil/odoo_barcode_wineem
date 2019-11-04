@@ -68,5 +68,16 @@
 
 <div *ngIf="!loading && showLeader && showOPs && showPicking && showClose">
     <h5>Cerrar Cajas</h5>
+    <div class="row mb-2 over-table">
+      <div class="col-4">Nombre</div>
+      <div class="col-4">Rep.</div>
+      <div class="col-4 text-right">Cerrar</div>
+    </div>
+    <div class="row mb-1" style="padding-bottom:4px;border-bottom:solid 1px #444;" *ngFor="let p of pBoxes;index as i;">
+      <div class="col-4">{{p.name}}</div>
+      <div class="col-4">{{p.rep}}</div>
+      <div class="col-4 text-right"><button mat-raised-button (click)="closeBox(p.id, i)">{{p.state}}</button></div>
+      <hr>
+    </div>
 </div>
 
