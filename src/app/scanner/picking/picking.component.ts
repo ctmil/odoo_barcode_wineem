@@ -382,7 +382,8 @@ export class PickingComponent implements OnInit, OnChanges {
   public validatePicking() {
     let isScan = false;
     let list = [];
-    let ilist = [];
+    let inlist = [];
+    let outlist = [];
     let plist = [];
 
     for (const p of this.pTable) {
@@ -390,6 +391,77 @@ export class PickingComponent implements OnInit, OnChanges {
         isScan = true;
         if (p.qty === p.scan_qty) {
           list.push(p.id);
+        } else {
+          $.xmlrpc({
+            url: this.server + '/object',
+            methodName: 'execute_kw',
+            crossDomain: true,
+            params: [this.db, this.uid, this.pass, 'stock.move', 'create', [{
+              product_id: p.id,
+              product_uom_qty: p.scan_qty,
+              product_uom: 1,
+              location_id: 2,
+              location_dest_id: 9,
+              name: 'STOCK-APP-' + Math.floor((Math.random() * 50000)) 
+            }]],
+            success: (response: any, status: any, jqXHR: any) => {
+              console.log('Stock Scan:', response);
+              inlist.push(response[0]);
+              $.xmlrpc({
+                url: this.server + '/object',
+                methodName: 'execute_kw',
+                crossDomain: true,
+                params: [this.db, this.uid, this.pass, 'stock.picking', 'create', [{
+                  picking_type_id: 2,
+                  backorder_id: this.pTable[0].id,
+                  move_lines: [[6, 0, inlist]]
+                }]],
+                success: (responseB: any, statusB: any, jqXHRB: any) => {
+                  console.log('Picking:', responseB);
+                  $.xmlrpc({
+                    url: this.server + '/object',
+                    methodName: 'execute_kw',
+                    crossDomain: true,
+                    params: [this.db, this.uid, this.pass, 'stock.box', 'write', [ [this.box[0].id], {
+                      pickings_ids: [[6, 0, responseB]]
+                    }]],
+                    success: (responseP: any, statusP: any, jqXHRP: any) => {
+                      console.log('Stock Box:', responseP);
+                    },
+                    error: (jqXHRP: any, statusP: any, errorP: any) => {
+                      console.log('Error : ' + errorP );
+                    }
+                  });
+                },
+                error: (jqXHR: any, status: any, error: any) => {
+                  console.log('Error : ' + error );
+                }
+              });
+            },
+            error: (jqXHR: any, status: any, error: any) => {
+              console.log('Error : ' + error );
+            }
+          });
+
+          $.xmlrpc({
+            url: this.server + '/object',
+            methodName: 'execute_kw',
+            crossDomain: true,
+            params: [this.db, this.uid, this.pass, 'stock.move', 'create', [{
+              product_id: p.id,
+              product_uom_qty: p.qty - p.scan_qty,
+              product_uom: 1,
+              location_id: 2,
+              location_dest_id: 9,
+              name: 'STOCK-APP-' + Math.floor((Math.random() * 50000)) 
+            }]],
+            success: (response: any, status: any, jqXHR: any) => {
+              console.log('Stock not Scan:', response);
+            },
+            error: (jqXHR: any, status: any, error: any) => {
+              console.log('Error : ' + error );
+            }
+          });
         }
       } else {
         plist.push(p.id);
@@ -399,21 +471,23 @@ export class PickingComponent implements OnInit, OnChanges {
     if (isScan === false) {
       alert('No hay productos escaneados');
     } else {
-      $.xmlrpc({
-        url: this.server + '/object',
-        methodName: 'execute_kw',
-        crossDomain: true,
-        params: [this.db, this.uid, this.pass, 'stock.box', 'write', [ [this.box[0].id], {
-          pickings_ids: [[6, 0, list]]
-        }]],
-        success: (response: any, status: any, jqXHR: any) => {
-          console.log('Stock Box:', response);
-          alert('Productos Cargados en Caja ' + this.box[0].name);
-        },
-        error: (jqXHR: any, status: any, error: any) => {
-          console.log('Error : ' + error );
-        }
-      });
+      if (list.length > 0) {
+        $.xmlrpc({
+          url: this.server + '/object',
+          methodName: 'execute_kw',
+          crossDomain: true,
+          params: [this.db, this.uid, this.pass, 'stock.box', 'write', [ [this.box[0].id], {
+            pickings_ids: [[6, 0, list]]
+          }]],
+          success: (response: any, status: any, jqXHR: any) => {
+            console.log('Stock Box:', response);
+            alert('Productos Cargados en Caja ' + this.box[0].name);
+          },
+          error: (jqXHR: any, status: any, error: any) => {
+            console.log('Error : ' + error );
+          }
+        });
+      }
 
       if (plist.length > 0) {
         $.xmlrpc({
@@ -433,6 +507,7 @@ export class PickingComponent implements OnInit, OnChanges {
           }
         });
       }
+
     }
   }
 
@@ -445,11 +520,11 @@ export class PickingComponent implements OnInit, OnChanges {
       crossDomain: true,
       params: [this.db, this.uid, this.pass, 'stock.box', 'search_read',
       [ [['create_uid', '=', this.uid], ['state', '=', 'opened']] ],
-      {'fields': ['name', 'id', 'rep_id']}],
+      {'fields': ['name', 'id', 'rep_id', 'rep_rep_id']}],
       success: (res: any, status: any, jqXHR: any) => {
         console.log('BOXES:', res[0]);
         for (let i = 0; i < res[0].length; i++) {
-          this.pBoxes.push({id: res[0][i].id, name: res[0][i].name, rep: res[0][i].rep_id[1], state: 'Abierta'});
+          this.pBoxes.push({id: res[0][i].id, name: res[0][i].name, lead: res[0][i].rep_rep_id[1] + ' Líder', rep: res[0][i].rep_id[1], state: 'Abierta'});
         }
       },
       error: (jqXHR: any, status: any, error: any) => {
