@@ -55,6 +55,7 @@
             <div class="col-3 text-right" *ngIf="p.ean13 != ''">
               <button mat-raised-button *ngIf="p.scan == false" style="background:#ff0000;" (click)="startScann(i)">NO ({{p.scan_qty}})</button>
               <button mat-raised-button *ngIf="p.scan == true" style="background:#00ff00;" (click)="startScann(i)">OK ({{p.scan_qty}})</button>
+              <button mat-raised-button (click)="addQty(i)">({{p.scan_qty}}) +</button>
             </div>
             <div class="col-3 text-right" *ngIf="p.ean13 == ''">
                 <button mat-raised-button (click)="addQty(i)">({{p.scan_qty}}) +</button>

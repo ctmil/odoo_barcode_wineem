@@ -1,6 +1,7 @@
 import { Component, OnInit, OnChanges, Input, Output, EventEmitter } from '@angular/core';
 import { ToolsService } from '../../service/tools.service';
 import { Picking } from '../../picking';
+import { ConcatSource } from 'webpack-sources';
 
 declare var jquery: any;
 declare var $: any;
@@ -199,7 +200,7 @@ export class PickingComponent implements OnInit, OnChanges {
       success: (response: any, status: any, jqXHR: any) => {
         this.loading = false;
         this.showPicking = true;
-        console.log(response);
+        console.log('Leader es', response[0][0].leader_id);
         if (response[0][0].leader_id !== false) {
           $.xmlrpc({
             url: this.server + '/object',
@@ -253,6 +254,15 @@ export class PickingComponent implements OnInit, OnChanges {
   }
 
   public createBox(picking: any): void {
+    console.log('Crear Caja', picking);
+    let picking_rep = 0;
+    let picking_rep_rep = false;
+    if (picking[0].leader !== false) {
+      picking_rep = picking[0].leader[0];
+      picking_rep_rep = picking[0].rep[0];
+    } else {
+      picking_rep = picking[0].rep[0];
+    }
     $.xmlrpc({
       url: this.server + '/object',
       methodName: 'execute_kw',
@@ -260,7 +270,8 @@ export class PickingComponent implements OnInit, OnChanges {
       params: [this.db, this.uid, this.pass, 'stock.box', 'create', [{
         name: 'BOX-APP-' + Math.floor((Math.random() * 50000)),
         state: 'opened',
-        rep_id: picking[0].rep[0],
+        rep_id: picking_rep,
+        rep_rep_id: picking_rep_rep
       }]],
       success: (res: any, status: any, jqXHR: any) => {
         console.log(res);
@@ -273,7 +284,7 @@ export class PickingComponent implements OnInit, OnChanges {
   }
 
   public getBox(id: number, picking: any): void {
-    console.log('Picking: ', picking[0]);
+    console.log('Picking: ', picking[0], 'Caja: ', id);
 
     $.xmlrpc({
       url: this.server + '/object',
@@ -315,6 +326,7 @@ export class PickingComponent implements OnInit, OnChanges {
       let qty = 0;
       let ean13 = 0;
       let id = 0;
+      let pid = 0;
 
       $.xmlrpc({
         url: this.server + '/object',
@@ -322,9 +334,10 @@ export class PickingComponent implements OnInit, OnChanges {
         crossDomain: true,
         params: [this.db, this.uid, this.pass, 'stock.move', 'search_read',
         [ [['id', '=', move]] ],
-        {'fields': ['product_id', 'product_uom_qty']}],
+        {'fields': ['product_id', 'product_uom_qty', 'picking_id' ]}],
         success: (res: any, status: any, jqXHR: any) => {
           qty = res[0][0].product_uom_qty;
+          id = res[0][0].picking_id[0];
 
           $.xmlrpc({
             url: this.server + '/object',
@@ -336,7 +349,7 @@ export class PickingComponent implements OnInit, OnChanges {
             success: (resP: any, statusP: any, jqXHRP: any) => {
               default_code = resP[0][0].default_code;
               ean13 = resP[0][0].ean13;
-              id = resP[0][0].id;
+              pid = resP[0][0].id;
 
               if (resP[0][0].channel_id) {
                 $.xmlrpc({
@@ -348,7 +361,7 @@ export class PickingComponent implements OnInit, OnChanges {
                   {'fields': ['short_name']}],
                   success: (resC: any, statusC: any, jqXHRC: any) => {
                     categ = resC[0][0].short_name;
-                    this.pTable.push({id: id, categ_id: categ, sku: default_code, qty: qty, ean13: ean13, scan: false, scan_qty: 0});
+                    this.pTable.push({id: id, pid: pid,categ_id: categ, sku: default_code, qty: qty, ean13: ean13, scan: false, scan_qty: 0});
                   },
                   error: (jqXHRC: any, statusC: any, errorC: any) => {
                     console.log('Error : ' + errorC );
@@ -356,7 +369,7 @@ export class PickingComponent implements OnInit, OnChanges {
                 });
               } else {
                 categ = 'NO-CAT';
-                this.pTable.push({id: id, categ_id: categ, sku: default_code, qty: qty, ean13: ean13, scan: false, scan_qty: 0});
+                this.pTable.push({id: id, pid: pid, categ_id: categ, sku: default_code, qty: qty, ean13: ean13, scan: false, scan_qty: 0});
               }
             },
             error: (jqXHRP: any, statusP: any, errorP: any) => {
@@ -386,7 +399,35 @@ export class PickingComponent implements OnInit, OnChanges {
     let outlist = [];
     let plist = [];
 
+    let moves = [];
+
     for (const p of this.pTable) {
+      if (p.scan) {
+        isScan = true;
+        $.xmlrpc({
+          url: this.server + '/object',
+          methodName: 'execute_kw',
+          crossDomain: true,
+          params: [this.db, this.uid, this.pass, 'stock.move', 'create', [{
+            product_id: p.pid,
+            product_uom_qty: p.scan_qty,
+            product_uom: 1,
+            location_id: 2,
+            location_dest_id: 9,
+            name: 'STOCK-APP-' + Math.floor((Math.random() * 50000)) 
+          }]],
+          success: (response: any, statusP: any, jqXHRP: any) => {
+            console.log('Stock:', response);
+            moves.push(response[0]);
+          },
+          error: (jqXHRP: any, statusP: any, error: any) => {
+            console.log('Error : ' + error );
+          }
+        });
+      }
+    }
+
+    /*for (const p of this.pTable) {
       if (p.scan === true) {
         isScan = true;
         if (p.qty === p.scan_qty) {
@@ -466,13 +507,47 @@ export class PickingComponent implements OnInit, OnChanges {
       } else {
         plist.push(p.id);
       }
-    }
+    }*/
 
     if (isScan === false) {
       alert('No hay productos escaneados');
     } else {
-      if (list.length > 0) {
+      setTimeout(() => {
+        console.log('Moves', moves);
         $.xmlrpc({
+          url: this.server + '/object',
+          methodName: 'execute_kw',
+          crossDomain: true,
+          params: [this.db, this.uid, this.pass, 'stock.picking', 'create', [{
+            picking_type_id: 2,
+            backorder_id: this.pTable[0].id,
+            move_lines: [[6, 0, moves]]
+          }]],
+          success: (response: any, status: any, jqXHR: any) => {
+            console.log('Picking:', response);
+            $.xmlrpc({
+              url: this.server + '/object',
+              methodName: 'execute_kw',
+              crossDomain: true,
+              params: [this.db, this.uid, this.pass, 'stock.box', 'write', [ [this.box[0].id], {
+                pickings_ids: [ [4, response[0] ]],
+              }]],
+              success: (responseP: any, statusp: any, jqXHRP: any) => {
+                console.log('Stock Box:', responseP);
+                alert('Productos Cargados en Caja ' + this.box[0].name);
+              },
+              error: (jqXHRP: any, statusP: any, errorP: any) => {
+                console.log('Error : ' + errorP );
+              }
+            });
+          },
+          error: (jqXHR: any, status: any, error: any) => {
+            console.log('Error : ' + error );
+          }
+        });
+      }, 500*this.pTable.length);
+
+        /*$.xmlrpc({
           url: this.server + '/object',
           methodName: 'execute_kw',
           crossDomain: true,
@@ -486,10 +561,9 @@ export class PickingComponent implements OnInit, OnChanges {
           error: (jqXHR: any, status: any, error: any) => {
             console.log('Error : ' + error );
           }
-        });
-      }
+        });*/
 
-      if (plist.length > 0) {
+      /*if (plist.length > 0) {
         $.xmlrpc({
           url: this.server + '/object',
           methodName: 'execute_kw',
@@ -506,7 +580,7 @@ export class PickingComponent implements OnInit, OnChanges {
             console.log('Error : ' + error );
           }
         });
-      }
+      }*/
 
     }
   }
