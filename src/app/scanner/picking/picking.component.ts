@@ -499,7 +499,6 @@ export class PickingComponent implements OnInit, OnChanges {
             }]],
             success: (responseP: any, statusp: any, jqXHRP: any) => {
               console.log('Write Stock Box:', responseP);
-              alert('Remito ' + u + ' Cargado en Caja ' + this.box[0].name);
             },
             error: (jqXHRP: any, statusP: any, errorP: any) => {
               console.log('Error : ' + errorP );
@@ -523,6 +522,22 @@ export class PickingComponent implements OnInit, OnChanges {
             console.log('Error : ' + error );
           }
         });
+
+        $.xmlrpc({
+          url: this.server + '/object',
+          methodName: 'execute_kw',
+          crossDomain: true,
+          params: [this.db, this.uid, this.pass, 'stock.picking.order', 'write', [ [this.selP[0].id], {
+            state: 'done'
+          }]],
+          success: (responseP: any, statusp: any, jqXHRP: any) => {
+            console.log('Write picking Order:', responseP);
+            alert('Remitos cargados en Caja ' + this.box[0].name);
+          },
+          error: (jqXHRP: any, statusP: any, errorP: any) => {
+            console.log('Error : ' + errorP );
+          }
+        }); 
       }, 500*this.pTable.length);
 
     }
