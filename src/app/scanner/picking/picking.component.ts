@@ -411,7 +411,7 @@ export class PickingComponent implements OnInit, OnChanges {
           crossDomain: true,
           params: [this.db, this.uid, this.pass, 'stock.move', 'write', [ [p.mid], {
             product_uom_qty: p.scan_qty,
-            state: 'assigned'
+            state: 'done'
           }]],
           success: (response: any, statusP: any, jqXHRP: any) => {
             console.log('Stock:', response);
@@ -480,7 +480,7 @@ export class PickingComponent implements OnInit, OnChanges {
             crossDomain: true,
             params: [this.db, this.uid, this.pass, 'stock.picking', 'write', [ [u], {
               move_lines: [[6, 0, moves]],
-              state: 'assigned'
+              state: 'done'
             }]],
             success: (responseP: any, statusp: any, jqXHRP: any) => {
               console.log('Write Stock Box:', responseP);
@@ -511,6 +511,7 @@ export class PickingComponent implements OnInit, OnChanges {
           methodName: 'execute_kw',
           crossDomain: true,
           params: [this.db, this.uid, this.pass, 'stock.picking', 'create', [{
+            partner_id: this.selP[0].customer[0],
             picking_type_id: 2,
             backorder_id: this.pTable[0].id,
             move_lines: [[6, 0, outMoves]]
@@ -528,7 +529,8 @@ export class PickingComponent implements OnInit, OnChanges {
           methodName: 'execute_kw',
           crossDomain: true,
           params: [this.db, this.uid, this.pass, 'stock.picking.order', 'write', [ [this.selP[0].id], {
-            state: 'done'
+            state: 'done',
+            move_lines: [[6, 0, moves]],
           }]],
           success: (responseP: any, statusp: any, jqXHRP: any) => {
             console.log('Write picking Order:', responseP);
