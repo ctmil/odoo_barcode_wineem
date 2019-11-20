@@ -54,6 +54,7 @@ export class PickingComponent implements OnInit, OnChanges {
   public pTable = [];
   public showClose = false;
   public pBoxes = [];
+  public closePicking = false;
   ////////////////////////////
   public alert = '';
   public alertPicking = '';
@@ -101,10 +102,7 @@ export class PickingComponent implements OnInit, OnChanges {
           (result: any) => {
             this.barcode = result.text;
             this.barcode_format = result.format;
-            console.log('We got a barcode\n' +
-                        'Result: ' + result.text + '\n' +
-                        'Format: ' + result.format + '\n' +
-                        'Cancelled: ' + result.cancelled);
+            console.log('Código escaneado correctamente');
             if (this.pTable[i].ean13 === result.text) {
               this.pTable[i].scan_qty = this.pTable[i].scan_qty + 1;
               if (this.pTable[i].scan_qty === this.pTable[i].qty) {
@@ -395,6 +393,7 @@ export class PickingComponent implements OnInit, OnChanges {
   }
 
   public validatePicking() {
+    this.closePicking = true;
     let isScan = false;
 
     let pickings = [];
@@ -488,7 +487,7 @@ export class PickingComponent implements OnInit, OnChanges {
             error: (jqXHRP: any, statusP: any, errorP: any) => {
               console.log('Error : ' + errorP );
             }
-          }); 
+          });
 
           $.xmlrpc({
             url: this.server + '/object',
