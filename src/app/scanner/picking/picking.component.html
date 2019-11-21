@@ -63,7 +63,7 @@
           </div>
       </div>
       <button mat-raised-button class="b_raised mt-4" mat-raised-button color="accent" (click)="validatePicking()">Confirmar Pedido</button>
-      <button mat-raised-button class="b_raised mt-4" mat-raised-button color="accent" (click)="closeBoxes()">Cerrar Cajas</button>
+      <button mat-raised-button class="b_raised mt-4" mat-raised-button color="accent" (click)="closeBoxes()" *ngIf="closePicking">Cerrar Cajas</button>
   </div>
 </div>
 
