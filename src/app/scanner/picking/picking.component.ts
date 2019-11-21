@@ -422,6 +422,24 @@ export class PickingComponent implements OnInit, OnChanges {
           }
         });
       } else if (p.scan && p.qty !== p.scan_qty) {
+        pickings.push(p.id);
+        isScan = true;
+        $.xmlrpc({
+          url: this.server + '/object',
+          methodName: 'execute_kw',
+          crossDomain: true,
+          params: [this.db, this.uid, this.pass, 'stock.move', 'write', [ [p.mid], {
+            product_uom_qty: p.scan_qty,
+            state: 'assigned'
+          }]],
+          success: (response: any, statusP: any, jqXHRP: any) => {
+            console.log('Stock:', response);
+            moves.push(p.mid);
+          },
+          error: (jqXHRP: any, statusP: any, error: any) => {
+            console.log('Error : ' + error );
+          }
+        });
         $.xmlrpc({
           url: this.server + '/object',
           methodName: 'execute_kw',
@@ -432,7 +450,7 @@ export class PickingComponent implements OnInit, OnChanges {
             product_uom: 1,
             location_id: 2,
             location_dest_id: 9,
-            name: 'STOCK-APP-' + Math.floor((Math.random() * 50000)) 
+            name: 'STOCK-APP-' + Math.floor((Math.random() * 50000))
           }]],
           success: (response: any, statusP: any, jqXHRP: any) => {
             console.log('New Stock:', response);
@@ -453,7 +471,7 @@ export class PickingComponent implements OnInit, OnChanges {
             product_uom: 1,
             location_id: 2,
             location_dest_id: 9,
-            name: 'STOCK-APP-' + Math.floor((Math.random() * 50000)) 
+            name: 'STOCK-APP-' + Math.floor((Math.random() * 50000))
           }]],
           success: (response: any, statusP: any, jqXHRP: any) => {
             console.log('New Stock:', response);
@@ -470,7 +488,7 @@ export class PickingComponent implements OnInit, OnChanges {
       alert('No hay productos escaneados');
     } else {
       setTimeout(() => {
-        let unique = [...new Set(pickings)];
+        const unique = [...new Set(pickings)];
         console.log('Unique:', unique);
         console.log('Moves', moves);
         for (const u of unique) {
@@ -488,7 +506,7 @@ export class PickingComponent implements OnInit, OnChanges {
             error: (jqXHRP: any, statusP: any, errorP: any) => {
               console.log('Error : ' + errorP );
             }
-          }); 
+          });
 
           $.xmlrpc({
             url: this.server + '/object',
@@ -503,7 +521,7 @@ export class PickingComponent implements OnInit, OnChanges {
             error: (jqXHRP: any, statusP: any, errorP: any) => {
               console.log('Error : ' + errorP );
             }
-          }); 
+          });
         }
 
         $.xmlrpc({
@@ -537,8 +555,8 @@ export class PickingComponent implements OnInit, OnChanges {
           error: (jqXHRP: any, statusP: any, errorP: any) => {
             console.log('Error : ' + errorP );
           }
-        }); 
-      }, 500*this.pTable.length);
+        });
+      }, 500 * this.pTable.length);
 
     }
 
@@ -592,7 +610,7 @@ export class PickingComponent implements OnInit, OnChanges {
       crossDomain: true,
       params: [this.db, this.uid, this.pass, 'uniqs_box_label_2.print', [ id ]],
       success: (response: any, status: any, jqXHR: any) => {
-        let element = document.createElement('a');
+        const element = document.createElement('a');
         element.setAttribute('href', 'data:application/pdf;base64,' + encodeURIComponent(response[0].result));
         element.setAttribute('download', 'nombre.pdf');
 
