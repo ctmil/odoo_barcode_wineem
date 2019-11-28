@@ -514,106 +514,101 @@ export class PickingComponent implements OnInit, OnChanges {
       }
     }
 
-    if (isScan === false) {
-      alert('No hay productos escaneados');
-    } else {
-      setTimeout(() => {
-        const unique = [...new Set(pickings)];
-        console.log('Unique:', unique);
-        console.log('Moves', moves);
-        const preFilter = this.t.groupBy(pickingMoves, 'p');
-        for (const u of unique) {
-          const uMoves = [];
-          for (const m of preFilter[u]) {
-            uMoves.push(m.m);
-          }
-          $.xmlrpc({
-            url: this.server + '/object',
-            methodName: 'execute_kw',
-            crossDomain: true,
-            params: [this.db, this.uid, this.pass, 'stock.picking', 'write', [ [u], {
-              move_lines: [[6, 0, uMoves]],
-              state: 'done'
-            }]],
-            success: (responseP: any, statusp: any, jqXHRP: any) => {
-              console.log('Write Stock Box:', responseP);
-            },
-            error: (jqXHRP: any, statusP: any, errorP: any) => {
-              console.log('Error : ' + errorP );
-            }
-          });
-
-          $.xmlrpc({
-            url: this.server + '/object',
-            methodName: 'execute_kw',
-            crossDomain: true,
-            params: [this.db, this.uid, this.pass, 'stock.box', 'write', [ [this.box[0].id], {
-              pickings_ids: [ [4, u ]],
-            }]],
-            success: (responseP: any, statusp: any, jqXHRP: any) => {
-              console.log('Write Stock Box:', responseP);
-            },
-            error: (jqXHRP: any, statusP: any, errorP: any) => {
-              console.log('Error : ' + errorP );
-            }
-          });
+    setTimeout(() => {
+      const unique = [...new Set(pickings)];
+      console.log('Unique:', unique);
+      console.log('Moves', moves);
+      const preFilter = this.t.groupBy(pickingMoves, 'p');
+      for (const u of unique) {
+        const uMoves = [];
+        for (const m of preFilter[u]) {
+          uMoves.push(m.m);
         }
-
-        for (const i of outMoves) {
-          console.log('Out', i);
-          $.xmlrpc({
-            url: this.server + '/object',
-            methodName: 'execute_kw',
-            crossDomain: true,
-            params: [this.db, this.uid, this.pass, 'stock.picking', 'search_read',
-            [ [['id', '=', i.id]] ],
-            {'fields': ['campaign', 'origin', 'partner_id', 'picking_type_id']}],
-            success: (resC: any, statusC: any, jqXHRC: any) => {
-              $.xmlrpc({
-                url: this.server + '/object',
-                methodName: 'execute_kw',
-                crossDomain: true,
-                params: [this.db, this.uid, this.pass, 'stock.picking', 'create', [{
-                  partner_id: resC[0][0].partner_id[0],
-                  picking_type_id: resC[0][0].picking_type_id[0],
-                  backorder_id: i.id,
-                  origin: resC[0][0].origin,
-                  campaign: resC[0][0].campaign[0],
-                  move_lines: [[6, 0, i.moves]]
-                }]],
-                success: (response: any, status: any, jqXHR: any) => {
-                  console.log('New Picking:', response);
-                },
-                error: (jqXHR: any, status: any, error: any) => {
-                  console.log('Error : ' + error );
-                }
-              });
-            },
-            error: (jqXHRC: any, statusC: any, errorC: any) => {
-              console.log('Error : ' + errorC );
-            }
-          });
-        }
-
         $.xmlrpc({
           url: this.server + '/object',
           methodName: 'execute_kw',
           crossDomain: true,
-          params: [this.db, this.uid, this.pass, 'stock.picking.order', 'write', [ [this.selP[0].id], {
-            state: 'done',
-            move_ids: [[6, 0, moves]],
+          params: [this.db, this.uid, this.pass, 'stock.picking', 'write', [ [u], {
+            move_lines: [[6, 0, uMoves]],
+            state: 'done'
           }]],
           success: (responseP: any, statusp: any, jqXHRP: any) => {
-            console.log('Write picking Order:', responseP);
-            alert('Remitos cargados en Caja ' + this.box[0].name);
+            console.log('Write Stock Box:', responseP);
           },
           error: (jqXHRP: any, statusP: any, errorP: any) => {
             console.log('Error : ' + errorP );
           }
         });
-      }, 1000 * this.pTable.length);
 
-    }
+        $.xmlrpc({
+          url: this.server + '/object',
+          methodName: 'execute_kw',
+          crossDomain: true,
+          params: [this.db, this.uid, this.pass, 'stock.box', 'write', [ [this.box[0].id], {
+            pickings_ids: [ [4, u ]],
+          }]],
+          success: (responseP: any, statusp: any, jqXHRP: any) => {
+            console.log('Write Stock Box:', responseP);
+          },
+          error: (jqXHRP: any, statusP: any, errorP: any) => {
+            console.log('Error : ' + errorP );
+          }
+        });
+      }
+
+      for (const i of outMoves) {
+        console.log('Out', i);
+        $.xmlrpc({
+          url: this.server + '/object',
+          methodName: 'execute_kw',
+          crossDomain: true,
+          params: [this.db, this.uid, this.pass, 'stock.picking', 'search_read',
+          [ [['id', '=', i.id]] ],
+          {'fields': ['campaign', 'origin', 'partner_id', 'picking_type_id']}],
+          success: (resC: any, statusC: any, jqXHRC: any) => {
+            $.xmlrpc({
+              url: this.server + '/object',
+              methodName: 'execute_kw',
+              crossDomain: true,
+              params: [this.db, this.uid, this.pass, 'stock.picking', 'create', [{
+                partner_id: resC[0][0].partner_id[0],
+                picking_type_id: resC[0][0].picking_type_id[0],
+                backorder_id: i.id,
+                origin: resC[0][0].origin,
+                campaign: resC[0][0].campaign[0],
+                move_lines: [[6, 0, i.moves]]
+              }]],
+              success: (response: any, status: any, jqXHR: any) => {
+                console.log('New Picking:', response);
+              },
+              error: (jqXHR: any, status: any, error: any) => {
+                console.log('Error : ' + error );
+              }
+            });
+          },
+          error: (jqXHRC: any, statusC: any, errorC: any) => {
+            console.log('Error : ' + errorC );
+          }
+        });
+      }
+
+      $.xmlrpc({
+        url: this.server + '/object',
+        methodName: 'execute_kw',
+        crossDomain: true,
+        params: [this.db, this.uid, this.pass, 'stock.picking.order', 'write', [ [this.selP[0].id], {
+          state: 'done',
+          move_ids: [[6, 0, moves]],
+        }]],
+        success: (responseP: any, statusp: any, jqXHRP: any) => {
+          console.log('Write picking Order:', responseP);
+          alert('Remitos cargados en Caja ' + this.box[0].name);
+        },
+        error: (jqXHRP: any, statusP: any, errorP: any) => {
+          console.log('Error : ' + errorP );
+        }
+      });
+    }, 1000 * this.pTable.length);
 
   }
 
