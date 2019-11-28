@@ -399,9 +399,11 @@ export class PickingComponent implements OnInit, OnChanges {
     let pickings = [];
     let noPickings = [];
     let moves = [];
+    let pickingMoves = [];
     let outMoves = [];
 
     for (const p of this.pTable) {
+      console.log(p);
       if (p.scan && p.qty === p.scan_qty) {
         pickings.push(p.id);
         isScan = true;
@@ -416,6 +418,7 @@ export class PickingComponent implements OnInit, OnChanges {
           success: (response: any, statusP: any, jqXHRP: any) => {
             console.log('Stock:', response);
             moves.push(p.mid);
+            pickingMoves.push({p: p.id, m: p.mid});
           },
           error: (jqXHRP: any, statusP: any, error: any) => {
             console.log('Error : ' + error );
@@ -436,6 +439,7 @@ export class PickingComponent implements OnInit, OnChanges {
           success: (response: any, statusP: any, jqXHRP: any) => {
             console.log('Stock:', response);
             moves.push(p.mid);
+            pickingMoves.push({p: p.id, m: p.mid});
           },
           error: (jqXHRP: any, statusP: any, error: any) => {
             console.log('Error : ' + error );
@@ -517,13 +521,18 @@ export class PickingComponent implements OnInit, OnChanges {
         const unique = [...new Set(pickings)];
         console.log('Unique:', unique);
         console.log('Moves', moves);
+        const preFilter = this.t.groupBy(pickingMoves, 'p');
         for (const u of unique) {
+          const uMoves = [];
+          for (const m of preFilter[u]) {
+            uMoves.push(m.m);
+          }
           $.xmlrpc({
             url: this.server + '/object',
             methodName: 'execute_kw',
             crossDomain: true,
             params: [this.db, this.uid, this.pass, 'stock.picking', 'write', [ [u], {
-              move_lines: [[6, 0, moves]],
+              move_lines: [[6, 0, uMoves]],
               state: 'done'
             }]],
             success: (responseP: any, statusp: any, jqXHRP: any) => {
@@ -602,7 +611,7 @@ export class PickingComponent implements OnInit, OnChanges {
             console.log('Error : ' + errorP );
           }
         });
-      }, 500 * this.pTable.length);
+      }, 1000 * this.pTable.length);
 
     }
 
