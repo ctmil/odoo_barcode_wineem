@@ -434,7 +434,8 @@ export class PickingComponent implements OnInit, OnChanges {
           crossDomain: true,
           params: [this.db, this.uid, this.pass, 'stock.move', 'write', [ [p.mid], {
             product_uom_qty: p.scan_qty,
-            state: 'assigned'
+            state: 'assigned',
+            invoice_state: '2binvoiced'
           }]],
           success: (response: any, statusP: any, jqXHRP: any) => {
             console.log('Stock:', response);
@@ -466,7 +467,7 @@ export class PickingComponent implements OnInit, OnChanges {
                   break;
                 } else {
                   outMoves.push({id: p.id, moves: [response[0]]});
-                  break;   
+                  break;
                 }
               }
             } else {
@@ -500,7 +501,7 @@ export class PickingComponent implements OnInit, OnChanges {
                   break;
                 } else {
                   outMoves.push({id: p.id, moves: [response[0]]});
-                  break;   
+                  break;
                 }
               }
             } else {
@@ -530,7 +531,8 @@ export class PickingComponent implements OnInit, OnChanges {
           crossDomain: true,
           params: [this.db, this.uid, this.pass, 'stock.picking', 'write', [ [u], {
             move_lines: [[6, 0, uMoves]],
-            state: 'done'
+            state: 'done',
+            invoice_state: '2binvoiced'
           }]],
           success: (responseP: any, statusp: any, jqXHRP: any) => {
             console.log('Write Stock Box:', responseP);
