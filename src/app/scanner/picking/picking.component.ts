@@ -50,6 +50,7 @@ export class PickingComponent implements OnInit, OnChanges {
   public leaderSel: any;
   public showPicking = false;
   public box: any;
+  public boxList = [];
   public selP: any;
   public pTable = [];
   public showClose = false;
@@ -128,7 +129,7 @@ export class PickingComponent implements OnInit, OnChanges {
       url: server_url + '/object',
       methodName: 'execute_kw',
       crossDomain: true,
-      params: [db, uid, pass, 'stock.picking.order', 'search_read', [ [['state', '=', 'draft']] ],
+      params: [db, uid, pass, 'stock.picking.order', 'search_read', [ [['user', '=', uid], ['state', '=', 'planned']] ],
       {'fields': ['name', 'id', 'partner_id', 'move_ids', 'rep', 'leader'], 'limit': 5}],
       success: (response: any, status: any, jqXHR: any) => {
         if (response) {
@@ -251,7 +252,32 @@ export class PickingComponent implements OnInit, OnChanges {
     });
   }
 
+  public selBox(id: number): void {
+    if (this.alertPicking !== '') {
+      this.alertPicking = '';
+    }
+
+    $.xmlrpc({
+      url: this.server + '/object',
+      methodName: 'execute_kw',
+      crossDomain: true,
+      params: [this.db, this.uid, this.pass, 'stock.box', 'search_read',
+      [ [['id', '=', id]] ],
+      {'fields': ['name', 'id', 'rep_id']}],
+      success: (res: any, status: any, jqXHR: any) => {
+        this.box = res[0];
+      },
+      error: (jqXHR: any, status: any, error: any) => {
+        console.log('Error : ' + error );
+      }
+    });
+  }
+
   public createBox(picking: any): void {
+    if (this.alertPicking !== '') {
+      this.alertPicking = '';
+    }
+
     console.log('Crear Caja', picking);
     let picking_rep = 0;
     let picking_rep_rep = false;
@@ -306,11 +332,28 @@ export class PickingComponent implements OnInit, OnChanges {
       [ [['id', '=', id]] ],
       {'fields': ['name', 'id', 'rep_id', 'create_uid']}],
       success: (res: any, status: any, jqXHR: any) => {
-        console.log(res);
-        if (res[0][0].create_uid[0] !== this.uid) {
-          this.alertPicking = 'Ya hay una caja abierta por otro Usuario.';
-        } else {
+        if (res[0][0].create_uid[0] === this.uid) {
           this.box = res[0];
+        } else {
+          $.xmlrpc({
+            url: this.server + '/object',
+            methodName: 'execute_kw',
+            crossDomain: true,
+            params: [this.db, this.uid, this.pass, 'stock.box', 'search_read',
+            [ [['rep_id', '=', picking[0].rep[0]], ['state', '=', 'opened']] ],
+            {'fields': ['name', 'id', 'rep_id', 'create_uid']}],
+            success: (resB: any, statusB: any, jqXHRB: any) => {
+              for (const i of resB[0]) {
+                if (i.create_uid[0] !== this.uid) {
+                  this.alertPicking = 'Ya hay una caja abierta por otro Usuario.';
+                  this.boxList.push({name: i.name, id: i.id});
+                }
+              }
+            },
+            error: (jqXHRB: any, statusB: any, errorB: any) => {
+              console.log('Error : ' + errorB );
+            }
+          });
         }
       },
       error: (jqXHR: any, status: any, error: any) => {

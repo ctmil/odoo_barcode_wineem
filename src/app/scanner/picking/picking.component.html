@@ -33,7 +33,10 @@
   <p *ngIf="alertPicking != ''">{{alertPicking}}</p>
   <div *ngIf="alertPicking == 'Ya hay una caja abierta por otro Usuario.'">
       <button class="b_raised" mat-raised-button color="accent" (click)="createBox(selP)">Crear caja</button>
-      <button class="b_raised" mat-raised-button color="accent" (click)="alertPicking = '';">Usar de todas formas</button>
+      <h5 class="mt-2">Usar Caja:</h5>
+      <div *ngFor="let b of boxList">
+        <button class="b_raised" mat-raised-button color="accent" (click)="selBox(b.id)">Usar Caja {{b.name}}</button>
+      </div>
   </div>
 
   <div *ngIf="alertPicking != 'Ya hay una caja abierta por otro Usuario.'">
