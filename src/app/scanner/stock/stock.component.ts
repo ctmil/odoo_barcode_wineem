@@ -82,7 +82,7 @@ export class StockComponent implements OnInit, OnChanges {
         console.log('Scanning failed: ' + error);
       },
       this.scanConfig
-  );
+    );
   }
 
   // END - Internal use funs
