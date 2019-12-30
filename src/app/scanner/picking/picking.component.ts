@@ -31,6 +31,7 @@ export class PickingComponent implements OnInit, OnChanges {
   // tslint:disable-next-line: no-input-rename
   @Input('logged') logged = false;
   @Output() log = new EventEmitter();
+  @Output() out = new EventEmitter();
   ////////////////////////////
   public barcode = '';
   public barcode_format = '';
@@ -51,11 +52,13 @@ export class PickingComponent implements OnInit, OnChanges {
   public showPicking = false;
   public box: any;
   public boxList = [];
+  public boxCreated = false;
   public selP: any;
   public pTable = [];
   public showClose = false;
   public pBoxes = [];
   public closePicking = false;
+  public confirmed = false;
   ////////////////////////////
   public alert = '';
   public alertPicking = '';
@@ -266,6 +269,19 @@ export class PickingComponent implements OnInit, OnChanges {
       {'fields': ['name', 'id', 'rep_id']}],
       success: (res: any, status: any, jqXHR: any) => {
         this.box = res[0];
+        $.xmlrpc({
+          url: this.server + '/object',
+          methodName: 'execute_kw',
+          crossDomain: true,
+          params: [this.db, this.uid, this.pass, 'stock.picking.order', 'write',
+          [ [this.selP[0].id], {'box_id': id}]],
+          success: (resP: any, statusP: any, jqXHRP: any) => {
+            console.log(resP);
+          },
+          error: (jqXHRP: any, statusP: any, errorP: any) => {
+            console.log('Error : ' + errorP );
+          }
+        });
       },
       error: (jqXHR: any, status: any, error: any) => {
         console.log('Error : ' + error );
@@ -277,6 +293,8 @@ export class PickingComponent implements OnInit, OnChanges {
     if (this.alertPicking !== '') {
       this.alertPicking = '';
     }
+
+    this.boxCreated = true;
 
     console.log('Crear Caja', picking);
     let picking_rep = 0;
@@ -438,6 +456,7 @@ export class PickingComponent implements OnInit, OnChanges {
   public validatePicking() {
     this.closePicking = true;
     let isScan = false;
+    this.confirmed = true;
 
     let pickings = [];
     let noPickings = [];
@@ -723,5 +742,42 @@ export class PickingComponent implements OnInit, OnChanges {
   }
 
   // END - Internal use funs
+
+  public goOut(): void {
+    if (this.boxCreated === true && this.confirmed === false) {
+      $.xmlrpc({
+        url: this.server + '/object',
+        methodName: 'execute_kw',
+        crossDomain: true,
+        params: [this.db, this.uid, this.pass, 'stock.box', 'write', [ [this.box[0].id], {
+          state: 'closed'
+        }]],
+        success: (response: any, status: any, jqXHR: any) => {
+          console.log('Stock Box:', response);
+        },
+        error: (jqXHR: any, status: any, error: any) => {
+          console.log('Error : ' + error );
+          alert('La Caja no se puede Cerrar');
+        }
+      });
+
+      $.xmlrpc({
+        url: this.server + '/object',
+        methodName: 'execute_kw',
+        crossDomain: true,
+        params: [this.db, this.uid, this.pass, 'stock.order.picking', 'write', [ [this.selP[0].id], {
+          state: 'closed'
+        }]],
+        success: (response: any, status: any, jqXHR: any) => {
+          console.log('Stock Picking:', response);
+        },
+        error: (jqXHR: any, status: any, error: any) => {
+          console.log('Error : ' + error );
+        }
+      });
+    }
+
+    this.out.emit();
+  }
 
 }

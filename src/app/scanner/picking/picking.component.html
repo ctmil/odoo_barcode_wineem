@@ -5,7 +5,7 @@
 <div *ngIf="!loading && !showLeader && !showOPs && !showPicking && !showClose">
  <a class="d-block" *ngFor="let rep of pickRep" (click)="readRep(rep.id)">
   <h4>{{rep.name}} <small>({{rep.vals.length}})</small></h4>
-  <hr>
+  <hr/>
  </a>
  <p *ngIf="alert != ''">{{alert}}</p>
 </div>
@@ -15,7 +15,7 @@
   <br>
   <a class="d-block" *ngFor="let leader of pickLeader" (click)="readLeader(leader.id)">
     <h4>{{leader.name}} <small>({{leader.vals.length}})</small></h4>
-    <hr>
+    <hr/>
   </a>
 </div>
 
@@ -25,7 +25,7 @@
   <br>
   <a class="d-block" *ngFor="let op of leaderSel.vals" (click)="readOP(op.id)">
     <h4>{{op.name}} <small>({{op.move_ids.length}})</small></h4>
-    <hr>
+    <hr/>
   </a> 
 </div>
 
@@ -82,7 +82,12 @@
       <div class="col-4" *ngIf="p.lead == 'undefined Líder'">{{p.rep}}</div>
       <div class="col-4" *ngIf="p.lead != 'undefined Líder'">{{p.lead}}</div>
       <div class="col-4 text-right"><button mat-raised-button (click)="closeBox(p.id, i)">{{p.state}}</button></div>
-      <hr>
+      <hr/>
     </div>
 </div>
 
+<div class="mt-3">
+  <button mat-raised-button color="primary" (click)="goOut()">
+    Volver al Menu
+  </button>
+</div>

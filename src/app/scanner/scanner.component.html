@@ -21,15 +21,15 @@
 </div>
 
 <div class="container odoo-logged odoo-input" *ngIf="showPicking">
-  <app-picking [server]="server" [db]="db" [user]="user" [pass]="pass" [uid]="uid" [inLoad]="inLoad" [logged]="logged"></app-picking>
+  <app-picking [server]="server" [db]="db" [user]="user" [pass]="pass" [uid]="uid" [inLoad]="inLoad" [logged]="logged" (out)="goOut()"></app-picking>
 </div>
 
 <div class="container odoo-logged odoo-input" *ngIf="showStock">
   <app-stock [server]="server" [db]="db" [user]="user" [pass]="pass" [uid]="uid" [inLoad]="inLoad" [logged]="logged"></app-stock>
 </div>
 
-<div class="mt-3">
+<!--div class="mt-3">
   <button mat-raised-button color="primary" *ngIf="showPicking || showStock" (click)="showPicking = false;showStock = false;">
     Volver al Menu
   </button>
-</div>
+</div-->

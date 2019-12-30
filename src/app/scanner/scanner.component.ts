@@ -52,6 +52,11 @@ export class ScannerComponent implements OnInit, OnChanges {
 
   // END - Internal use funs
 
+  public goOut(): void {
+    this.showPicking = false;
+    this.showStock = false;
+  }
+
   /* LogOut emiter */
   public logOut(): void {
     this.log.emit();
