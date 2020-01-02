@@ -362,10 +362,8 @@ export class PickingComponent implements OnInit, OnChanges {
             {'fields': ['name', 'id', 'rep_id', 'create_uid']}],
             success: (resB: any, statusB: any, jqXHRB: any) => {
               for (const i of resB[0]) {
-                if (i.create_uid[0] !== this.uid) {
-                  this.alertPicking = 'Ya hay una caja abierta por otro Usuario.';
-                  this.boxList.push({name: i.name, id: i.id});
-                }
+                this.alertPicking = 'Ya hay una caja abierta por otro Usuario.';
+                this.boxList.push({name: i.name, id: i.id, u: i.create_uid[1]});
               }
             },
             error: (jqXHRB: any, statusB: any, errorB: any) => {
