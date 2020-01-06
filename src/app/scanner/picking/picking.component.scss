@@ -2,8 +2,8 @@
     background: #8a4e79;
 }
 .over-table div {
-    padding:5px 15px;
-    border-right:4px solid #9b658c;
+    padding:5px 1px;
+    border-right:1px solid #9b658c;
 }
 
 .b_raised {
@@ -14,4 +14,15 @@
 
 .border-spe {
     border-bottom:2px #8a4e79 solid;
+}
+.border-spe div {
+    padding:5px 1px;
+}
+
+.background-green {
+    background-color:#00ff00;
+    color: #000;
+}
+.no-back {
+    background-color:transparent;
 }

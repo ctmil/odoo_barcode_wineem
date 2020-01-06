@@ -40,28 +40,32 @@
   </div>
 
   <div *ngIf="alertPicking != 'Ya hay una caja abierta por otro Usuario.'">
-      <h5 *ngIf="selP">{{selP[0].name}}</h5>
-      <h5 *ngIf="box != undefined">{{box[0].name}}</h5>
-      <h6 *ngIf="box != undefined">Representante / Líder: {{box[0].rep_id[1]}}</h6>
-      <br />
+      <div class="row" *ngIf="box != undefined">
+        <h5 *ngIf="selP">
+          <span>{{selP[0].name}}</span> - <span *ngIf="box != undefined">{{box[0].name}}</span>
+        </h5>
+        <h6 *ngIf="box != undefined">
+          Rep: {{box[0].rep_id[1]}}
+        </h6>
+      </div>
+
       <div *ngIf="box != undefined">
           <div class="row mb-2 over-table">
-              <div class="col-3">Categ.</div>
+              <div class="col-2">Cat.</div>
               <div class="col-3">SKU</div>
-              <div class="col-3 text-right">Cant.</div>
-              <div class="col-3 text-right">Scan</div>
+              <div class="col-1 text-center">Q</div>
+              <div class="col-3 text-center">Scan</div>
+              <div class="col-3 text-center">Forzar</div>
           </div>
-          <div class="row mb-2 pb-2 border-spe" *ngFor="let p of pTable;index as i;">
-            <div class="col-3 text-uppercase text-center">{{p.categ_id}}</div>
-            <div class="col-3 text-center">{{p.sku}}</div>
-            <div class="col-3 text-right">{{p.qty}}</div>
-            <div class="col-3 text-right" *ngIf="p.ean13 != ''">
-              <button mat-raised-button *ngIf="p.scan == false" style="background:#ff0000;" (click)="startScann(i)">NO ({{p.scan_qty}})</button>
-              <button mat-raised-button *ngIf="p.scan == true" style="background:#00ff00;" (click)="startScann(i)">OK ({{p.scan_qty}})</button>
-              <button mat-raised-button (click)="addQty(i)">({{p.scan_qty}}) +</button>
+          <div style="font-size:14px;" *ngFor="let p of pTable;index as i;" [className]="p.scan ? 'background-green row mb-2 pb-2 border-spe' : 'no-back row mb-2 pb-2 border-spe'">
+            <div class="col-2 text-uppercase">{{p.categ_id}}</div>
+            <div class="col-3">{{p.sku}}</div>
+            <div class="col-1 text-center">{{p.qty}}</div>
+            <div class="col-3 text-center">
+              <button mat-raised-button *ngIf="p.ean13 != ''" (click)="startScann(i)">({{p.scan_qty}})</button>
             </div>
-            <div class="col-3 text-right" *ngIf="p.ean13 == ''">
-                <button mat-raised-button (click)="addQty(i)">({{p.scan_qty}}) +</button>
+            <div class="col-3 text-center">
+                <button mat-raised-button (click)="addQty(i)">({{p.scan_qty}})</button>
             </div>
           </div>
       </div>

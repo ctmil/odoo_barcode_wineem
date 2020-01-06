@@ -1,10 +1,11 @@
-<div class="row" *ngIf="!showPicking && !showStock">
+<div class="row mt-4" *ngIf="!showPicking && !showStock">
   <div class="col-12">
     <div class="loading" *ngIf="inLoad">
         <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
       </div>
       <div class="odoo-content-data" *ngIf="!inLoad">
-        <p class="user">User: {{user}}</p>
+        <h4>Odoo Wineem</h4>
+        <h5 class="user mb-3">User: {{user}}</h5>
         <div class="mat-button">
           <button mat-raised-button color="primary" (click)="logOut()">Log Out</button>
         </div>
@@ -20,11 +21,11 @@
   </div>
 </div>
 
-<div class="container odoo-logged odoo-input" *ngIf="showPicking">
+<div class="container mt-4 odoo-logged odoo-input" *ngIf="showPicking">
   <app-picking [server]="server" [db]="db" [user]="user" [pass]="pass" [uid]="uid" [inLoad]="inLoad" [logged]="logged" (out)="goOut()"></app-picking>
 </div>
 
-<div class="container odoo-logged odoo-input" *ngIf="showStock">
+<div class="container mt-4 sodoo-logged odoo-input" *ngIf="showStock">
   <app-stock [server]="server" [db]="db" [user]="user" [pass]="pass" [uid]="uid" [inLoad]="inLoad" [logged]="logged"></app-stock>
 </div>
 

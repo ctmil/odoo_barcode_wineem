@@ -420,15 +420,15 @@ export class PickingComponent implements OnInit, OnChanges {
                   {'fields': ['short_name']}],
                   success: (resC: any, statusC: any, jqXHRC: any) => {
                     categ = resC[0][0].short_name;
-                    this.pTable.push({mid: mid, id: id, pid: pid, categ_id: categ, sku: default_code, qty: qty, ean13: ean13, scan: false, scan_qty: 0});
+                    this.pTable.push({mid: mid, id: id, pid: pid, categ_id: categ, sku: default_code.replace(/\s/g, ''), qty: qty, ean13: ean13, scan: false, scan_qty: 0});
                   },
                   error: (jqXHRC: any, statusC: any, errorC: any) => {
                     console.log('Error : ' + errorC );
                   }
                 });
               } else {
-                categ = 'NO-CAT';
-                this.pTable.push({mid: mid, id: id, pid: pid, categ_id: categ, sku: default_code, qty: qty, ean13: ean13, scan: false, scan_qty: 0});
+                categ = 'N/A';
+                this.pTable.push({mid: mid, id: id, pid: pid, categ_id: categ, sku: default_code.replace(/\s/g, ''), qty: qty, ean13: ean13, scan: false, scan_qty: 0});
               }
             },
             error: (jqXHRP: any, statusP: any, errorP: any) => {
@@ -723,7 +723,7 @@ export class PickingComponent implements OnInit, OnChanges {
       params: [this.db, this.uid, this.pass, 'uniqs_box_label_2.print', [ id ]],
       success: (response: any, status: any, jqXHR: any) => {
         const element = document.createElement('a');
-        element.setAttribute('href', 'data:application/pdf;base64,' + encodeURIComponent(response[0].result));
+        element.setAttribute('href', 'googlechrome://navigate?url=data:application/pdf;base64,' + encodeURIComponent(response[0].result));
         element.setAttribute('download', 'nombre.pdf');
 
         element.style.display = 'none';
