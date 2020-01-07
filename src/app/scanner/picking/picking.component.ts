@@ -760,7 +760,8 @@ export class PickingComponent implements OnInit, OnChanges {
       params: [this.db, this.uid, this.pass, 'uniqs_box_label_2.print', [ id ]],
       success: (response: any, status: any, jqXHR: any) => {
         const element = document.createElement('a');
-        element.setAttribute('href', 'googlechrome://navigate?url=data:application/pdf;base64,' + encodeURIComponent(response[0].result));
+        element.setAttribute('href', 'data:application/pdf;base64,' + encodeURIComponent(response[0].result));
+        element.setAttribute('target', 'blank');
         element.setAttribute('download', 'nombre.pdf');
 
         element.style.display = 'none';
@@ -774,6 +775,26 @@ export class PickingComponent implements OnInit, OnChanges {
         console.log('Error : ' + error );
       }
     });
+  }
+
+  backReps(): void {
+    this.showPicking = false;
+    this.box = false;
+    this.boxList = [];
+    this.boxCreated = false;
+    this.selP = false;
+    this.pTable = [];
+    this.showResumen = false;
+    this.showClose = false;
+    this.pBoxes = [];
+    this.closePicking = false;
+    this.confirmed = false;
+    this.isConfirmed = false;
+    this.trueQty = 0;
+    this.falseQty = 0;
+    this.trueProd = '';
+    this.alert = '';
+    this.alertPicking = '';
   }
 
   // END - Internal use funs
