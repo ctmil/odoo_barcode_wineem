@@ -2,7 +2,7 @@
   <mat-progress-spinner mode="indeterminate" style="margin:0 auto;"></mat-progress-spinner>
 </div>
 
-<div *ngIf="!loading && !showLeader && !showOPs && !showPicking && !showClose">
+<div *ngIf="!loading && !showLeader && !showOPs && !showPicking && !showResumen && !showClose">
  <a class="d-block" *ngFor="let rep of pickRep" (click)="readRep(rep.id)">
   <h4>{{rep.name}} <small>({{rep.vals.length}})</small></h4>
   <hr/>
@@ -10,7 +10,7 @@
  <p *ngIf="alert != ''">{{alert}}</p>
 </div>
 
-<div *ngIf="!loading && showLeader && !showOPs && !showPicking && !showClose">
+<div *ngIf="!loading && showLeader && !showOPs && !showPicking && !showResumen && !showClose">
   <h3 class="text-center">{{repSel.name}}</h3>
   <br>
   <a class="d-block" *ngFor="let leader of pickLeader" (click)="readLeader(leader.id)">
@@ -19,7 +19,7 @@
   </a>
 </div>
 
-<div *ngIf="!loading && showLeader && showOPs && !showPicking && !showClose">
+<div *ngIf="!loading && showLeader && showOPs && !showPicking && !showResumen && !showClose">
   <h3 class="text-center">{{repSel.name}}</h3>
   <h3 class="text-center">{{leaderSel.name}}</h3>
   <br>
@@ -29,7 +29,7 @@
   </a> 
 </div>
 
-<div *ngIf="!loading && showLeader && showOPs && showPicking && !showClose">
+<div *ngIf="!loading && showLeader && showOPs && showPicking && !showResumen && !showClose">
   <p *ngIf="alertPicking != ''">{{alertPicking}}</p>
   <div *ngIf="alertPicking == 'Ya hay una caja abierta por otro Usuario.'">
       <button class="b_raised" mat-raised-button color="accent" (click)="createBox(selP)">Crear caja</button>
@@ -69,12 +69,80 @@
             </div>
           </div>
       </div>
-      <button mat-raised-button class="b_raised mt-4" mat-raised-button color="accent" (click)="validatePicking()">Confirmar Pedido</button>
-      <button mat-raised-button class="b_raised mt-4" mat-raised-button color="accent" (click)="closeBoxes()" *ngIf="closePicking">Cerrar Cajas</button>
+      <button mat-raised-button class="b_raised mt-4" mat-raised-button color="accent" [disabled]="isConfirmed" (click)="validatePicking()">
+        <span *ngIf="!isConfirmed">Confirmar Pedido</span>
+        <div *ngIf="isConfirmed" class="ml-auto mr-auto text-center">
+          <mat-progress-spinner mode="indeterminate" diameter="40" class="ml-auto mr-auto">
+          </mat-progress-spinner>
+        </div>
+      </button>
   </div>
 </div>
 
-<div *ngIf="!loading && showLeader && showOPs && showPicking && showClose">
+<div *ngIf="!loading && showLeader && showOPs && showPicking && showResumen && !showClose">
+    <div class="row">
+      <div class="col-6">
+        <h6>{{selP[0].name}}</h6>
+      </div>
+      <div class="col-6">
+        <h6>{{box[0].name}}</h6>
+      </div>
+    </div>
+
+    <div class="row mt-3">
+      <div class="col-6 text-center">
+          <button mat-raised-button mat-raised-button color="primary" style="font-size:30px;" (click)="listTrueData()">
+              Tildado<br/>({{trueQty}})
+          </button>
+      </div>
+      <div class="col-6 text-center">
+          <button mat-raised-button mat-raised-button color="warn" style="font-size:30px;" (click)="listFalseData()">
+              Faltante<br/>({{falseQty}})
+          </button>
+      </div>
+    </div>
+
+    <div class="row mt-3">
+      <div class="col-12">
+          <button mat-raised-button class="b_raised mt-4" mat-raised-button color="accent">
+            Imprimir Remitos
+          </button>
+      </div>
+      <div class="col-12">
+          <button mat-raised-button class="b_raised mt-4" mat-raised-button color="accent" (click)="closeBoxes()">
+            Cajas
+          </button>
+      </div>
+      <div class="col-12">
+          <button mat-raised-button class="b_raised mt-4" mat-raised-button color="accent">
+            Volver
+          </button>
+      </div>
+    </div>
+
+    <div id="dialog" class="modal" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 style="color:#000;">Lista de Productos</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeList();">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body" style="color:#000;">
+                <p style="white-space: pre;">{{trueProd}}</p>
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="closeList();">
+                    Cerrar
+                  </button>
+              </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="!loading && showLeader && showOPs && showPicking && showResumen && showClose">
     <h5>Cerrar Cajas</h5>
     <div class="row mb-2 over-table">
       <div class="col-4">Nombre</div>

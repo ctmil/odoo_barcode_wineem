@@ -55,10 +55,15 @@ export class PickingComponent implements OnInit, OnChanges {
   public boxCreated = false;
   public selP: any;
   public pTable = [];
+  public showResumen = false;
   public showClose = false;
   public pBoxes = [];
   public closePicking = false;
   public confirmed = false;
+  public isConfirmed = false;
+  public trueQty = 0;
+  public falseQty = 0;
+  public trueProd = '';
   ////////////////////////////
   public alert = '';
   public alertPicking = '';
@@ -452,6 +457,7 @@ export class PickingComponent implements OnInit, OnChanges {
   }
 
   public validatePicking() {
+    this.isConfirmed = true;
     this.closePicking = true;
     let isScan = false;
     this.confirmed = true;
@@ -461,7 +467,7 @@ export class PickingComponent implements OnInit, OnChanges {
     let moves = [];
     let pickingMoves = [];
     let outMoves = [];
-
+    
     for (const p of this.pTable) {
       console.log(p);
       if (p.scan && p.qty === p.scan_qty) {
@@ -664,14 +670,45 @@ export class PickingComponent implements OnInit, OnChanges {
         }]],
         success: (responseP: any, statusp: any, jqXHRP: any) => {
           console.log('Write picking Order:', responseP);
-          alert('Remitos cargados en Caja ' + this.box[0].name);
+          for (const i of this.pTable) {
+            if (i.scan === true) {
+              this.trueQty += i.scan_qty;
+            } else {
+              this.falseQty += (i.qty - i.scan_qty);
+            }
+          }
+          this.showResumen = true;
+          this.isConfirmed = false;
         },
         error: (jqXHRP: any, statusP: any, errorP: any) => {
           console.log('Error : ' + errorP );
         }
       });
     }, 1000 * this.pTable.length);
+  }
 
+  public listTrueData() {
+    this.trueProd = '';
+    for (const i of this.pTable) {
+      if (i.scan === true) {
+        this.trueProd += i.sku + ' - Cantidad: ' + i.qty + '\n';
+      }
+    }
+    $('#dialog').fadeIn(500);
+  }
+  
+  public listFalseData() {
+    this.trueProd = '';
+    for (const i of this.pTable) {
+      if (i.scan === false) {
+        this.trueProd += i.sku + ' - Cantidad: ' + (i.qty - i.scan_qty) + '\n';
+      }
+    }
+    $('#dialog').fadeIn(500);
+  }
+
+  public closeList() {
+    $('#dialog').fadeOut(300);
   }
 
   public closeBoxes() {
