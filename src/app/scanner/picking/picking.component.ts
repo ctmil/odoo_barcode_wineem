@@ -757,7 +757,7 @@ export class PickingComponent implements OnInit, OnChanges {
       url: this.server + '/report',
       methodName: 'render_report',
       crossDomain: true,
-      params: [this.db, this.uid, this.pass, 'uniqs_box_label_2.print', [ id ]],
+      params: [this.db, this.uid, this.pass, 'numa_uniqs_custom_picking.report_picking_list', [ id ]],
       success: (response: any, status: any, jqXHR: any) => {
         const element = document.createElement('a');
         element.setAttribute('href', 'data:application/pdf;base64,' + encodeURIComponent(response[0].result));
@@ -775,6 +775,15 @@ export class PickingComponent implements OnInit, OnChanges {
         console.log('Error : ' + error );
       }
     });
+  }
+
+  reset(): void {
+    for (const p of this.pTable) {
+      if(p.scan) {
+        p.scan = false;
+        p.scan_qty = 0;
+      }
+    }
   }
 
   backReps(): void {
