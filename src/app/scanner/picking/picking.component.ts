@@ -759,17 +759,20 @@ export class PickingComponent implements OnInit, OnChanges {
       crossDomain: true,
       params: [this.db, this.uid, this.pass, 'numa_uniqs_custom_picking.report_picking_list', [ id ]],
       success: (response: any, status: any, jqXHR: any) => {
-        /*const element = document.createElement('a');
-        element.setAttribute('href', 'data:application/pdf;base64,' + encodeURIComponent(response[0].result));
-        element.setAttribute('target', 'blank');
-        element.setAttribute('download', 'nombre.pdf');
-
-        element.style.display = 'none';
-        document.body.appendChild(element);
-
-        element.click();
-
-        document.body.removeChild(element);*/
+        console.log('Remito:', response);
+        /*const link = document.createElement('a');
+        link.download = name;
+        link.href = 'data:application/pdf;base64,' + encodeURIComponent(response[0].result);
+        link.target = 'blank';
+        link.click();
+        const el = document.createElement('textarea');
+        el.value = 'data:application/pdf;base64,' + encodeURIComponent(response[0].result);
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+        alert('PDF copiado al portapapeles');*/
+        
         // window.open('data:application/pdf;base64,' + encodeURIComponent(response[0].result), '_system'); 
         cordova.InAppBrowser.open('data:application/pdf;base64,' + encodeURIComponent(response[0].result), '_system');
         return false;
