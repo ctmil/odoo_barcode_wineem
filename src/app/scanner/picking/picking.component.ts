@@ -759,7 +759,7 @@ export class PickingComponent implements OnInit, OnChanges {
       crossDomain: true,
       params: [this.db, this.uid, this.pass, 'numa_uniqs_custom_picking.report_picking_list', [ id ]],
       success: (response: any, status: any, jqXHR: any) => {
-        const element = document.createElement('a');
+        /*const element = document.createElement('a');
         element.setAttribute('href', 'data:application/pdf;base64,' + encodeURIComponent(response[0].result));
         element.setAttribute('target', 'blank');
         element.setAttribute('download', 'nombre.pdf');
@@ -769,7 +769,10 @@ export class PickingComponent implements OnInit, OnChanges {
 
         element.click();
 
-        document.body.removeChild(element);
+        document.body.removeChild(element);*/
+        // window.open('data:application/pdf;base64,' + encodeURIComponent(response[0].result), '_system'); 
+        cordova.InAppBrowser.open('data:application/pdf;base64,' + encodeURIComponent(response[0].result), '_system');
+        return false;
       },
       error: (jqXHR: any, status: any, error: any) => {
         console.log('Error : ' + error );
