@@ -754,33 +754,48 @@ export class PickingComponent implements OnInit, OnChanges {
 
   public getReportTag(id: number) {
     $.xmlrpc({
-      url: this.server + '/report',
-      methodName: 'render_report',
+      url: this.server + '/object',
+      methodName: 'execute_kw',
       crossDomain: true,
-      params: [this.db, this.uid, this.pass, 'numa_uniqs_custom_picking.report_picking_list', [ id ]],
+      params: [this.db, this.uid, this.pass, 'stock.picking.order', 'search_read', [ [['id', '=', id]] ],
+      {'fields': ['move_ids']}],
       success: (response: any, status: any, jqXHR: any) => {
-        console.log('Remito:', response);
-        /*const link = document.createElement('a');
-        link.download = name;
-        link.href = 'data:application/pdf;base64,' + encodeURIComponent(response[0].result);
-        link.target = 'blank';
-        link.click();
-        const el = document.createElement('textarea');
-        el.value = 'data:application/pdf;base64,' + encodeURIComponent(response[0].result);
-        document.body.appendChild(el);
-        el.select();
-        document.execCommand('copy');
-        document.body.removeChild(el);
-        alert('PDF copiado al portapapeles');*/
-        
-        // window.open('data:application/pdf;base64,' + encodeURIComponent(response[0].result), '_system'); 
-        cordova.InAppBrowser.open('data:application/pdf;base64,' + encodeURIComponent(response[0].result), '_system');
-        return false;
+        console.log(response);
+
+        $.xmlrpc({
+          url: this.server + '/report',
+          methodName: 'render_report',
+          crossDomain: true,
+          params: [this.db, this.uid, this.pass, 'picking_packing_list_print', [ response[0] ]],
+          success: (report: any, statusR: any, jqXHRR: any) => {
+            console.log('Remito:', response);
+            /*const link = document.createElement('a');
+            link.download = name;
+            link.href = 'data:application/pdf;base64,' + encodeURIComponent(response[0].result);
+            link.target = 'blank';
+            link.click();
+            const el = document.createElement('textarea');
+            el.value = 'data:application/pdf;base64,' + encodeURIComponent(response[0].result);
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            alert('PDF copiado al portapapeles');*/
+            
+            // window.open('data:application/pdf;base64,' + encodeURIComponent(response[0].result), '_system'); 
+            // cordova.InAppBrowser.open('data:application/pdf;base64,' + encodeURIComponent(response[0].result), '_system');
+            /// return false;
+          },
+          error: (jqXHRR: any, statusR: any, errorR: any) => {
+            console.log('Error : ' + errorR );
+          }
+        });
       },
       error: (jqXHR: any, status: any, error: any) => {
         console.log('Error : ' + error );
       }
     });
+    
   }
 
   reset(): void {
