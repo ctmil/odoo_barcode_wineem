@@ -64,6 +64,7 @@ export class PickingComponent implements OnInit, OnChanges {
   public trueQty = 0;
   public falseQty = 0;
   public trueProd = '';
+  public processItems = [];
   ////////////////////////////
   public alert = '';
   public alertPicking = '';
@@ -467,7 +468,7 @@ export class PickingComponent implements OnInit, OnChanges {
     let moves = [];
     let pickingMoves = [];
     let outMoves = [];
-    
+
     for (const p of this.pTable) {
       console.log(p);
       if (p.scan && p.qty === p.scan_qty) {
@@ -602,6 +603,7 @@ export class PickingComponent implements OnInit, OnChanges {
           }]],
           success: (responseP: any, statusp: any, jqXHRP: any) => {
             console.log('Write Stock Box:', responseP);
+            this.processItems.push(u);
           },
           error: (jqXHRP: any, statusP: any, errorP: any) => {
             console.log('Error : ' + errorP );
@@ -696,7 +698,7 @@ export class PickingComponent implements OnInit, OnChanges {
     }
     $('#dialog').fadeIn(500);
   }
-  
+
   public listFalseData() {
     this.trueProd = '';
     for (const i of this.pTable) {
@@ -753,49 +755,63 @@ export class PickingComponent implements OnInit, OnChanges {
   }
 
   public getReportTag(id: number) {
-    $.xmlrpc({
-      url: this.server + '/object',
-      methodName: 'execute_kw',
-      crossDomain: true,
-      params: [this.db, this.uid, this.pass, 'stock.picking.order', 'search_read', [ [['id', '=', id]] ],
-      {'fields': ['move_ids']}],
-      success: (response: any, status: any, jqXHR: any) => {
-        console.log(response);
 
-        $.xmlrpc({
-          url: this.server + '/report',
-          methodName: 'render_report',
-          crossDomain: true,
-          params: [this.db, this.uid, this.pass, 'picking_packing_list_print', [ response[0] ]],
-          success: (report: any, statusR: any, jqXHRR: any) => {
-            console.log('Remito:', response);
-            /*const link = document.createElement('a');
-            link.download = name;
-            link.href = 'data:application/pdf;base64,' + encodeURIComponent(response[0].result);
-            link.target = 'blank';
-            link.click();
-            const el = document.createElement('textarea');
-            el.value = 'data:application/pdf;base64,' + encodeURIComponent(response[0].result);
-            document.body.appendChild(el);
-            el.select();
-            document.execCommand('copy');
-            document.body.removeChild(el);
-            alert('PDF copiado al portapapeles');*/
-            
-            // window.open('data:application/pdf;base64,' + encodeURIComponent(response[0].result), '_system'); 
-            // cordova.InAppBrowser.open('data:application/pdf;base64,' + encodeURIComponent(response[0].result), '_system');
-            /// return false;
-          },
-          error: (jqXHRR: any, statusR: any, errorR: any) => {
-            console.log('Error : ' + errorR );
-          }
-        });
+    $.xmlrpc({
+      url: this.server + '/report',
+      methodName: 'render_report',
+      crossDomain: true,
+      params: [this.db, this.uid, this.pass, 'picking_packing_list_print', this.processItems],
+      success: (res: any, statusR: any, jqXHRR: any) => {
+        console.log(res[0].result);
+        this.savebase64AsPDF(cordova.file.externalRootDirectory, this.selP[0].name + '.pdf', res[0].result, 'application/pdf');
       },
-      error: (jqXHR: any, status: any, error: any) => {
-        console.log('Error : ' + error );
+      error: (jqXHRR: any, statusR: any, errorR: any) => {
+        console.log('Error : ' + errorR );
       }
     });
     
+  }
+
+  b64toBlob(b64Data, contentType, sliceSize?): any {
+    contentType = contentType || '';
+    sliceSize = sliceSize || 512;
+    const byteCharacters = atob(b64Data);
+    const byteArrays = [];
+    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+        const slice = byteCharacters.slice(offset, offset + sliceSize);
+        const byteNumbers = new Array(slice.length);
+        for (let i = 0; i < slice.length; i++) {
+            byteNumbers[i] = slice.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        byteArrays.push(byteArray);
+    }
+    const blob = new Blob(byteArrays, {type: contentType});
+    return blob;
+  }
+
+  savebase64AsPDF(folderpath, filename, content, contentType): any{
+    const DataBlob = this.b64toBlob(content, contentType);
+
+    console.log('Starting to write the file');
+
+    window.resolveLocalFileSystemURL(folderpath, function(dir) {
+      console.log('Access to the directory granted succesfully');
+      dir.getFile(filename, {create: true}, function(file) {
+            console.log('File created succesfully.');
+            file.createWriter(function(fileWriter) {
+                console.log('Writing content to file');
+                fileWriter.write(DataBlob);
+                console.log('Folder Path' + folderpath + filename);
+                const finalPath = folderpath + filename;
+                // Probar: https://github.com/Evolution-36/cordova-plugin-file-opener2
+                cordova.InAppBrowser.open(finalPath, '_system');
+
+            }, function() {
+                alert('No se puede guardar el archivo en ' + folderpath);
+            });
+      });
+    });
   }
 
   reset(): void {
