@@ -6,15 +6,16 @@
       <div class="odoo-content-data" *ngIf="!inLoad">
         <h4>Odoo Wineem</h4>
         <h5 class="user mb-3">User: {{user}}</h5>
-        <div class="mat-button">
-          <button mat-raised-button color="primary" (click)="logOut()">Log Out</button>
-        </div>
         <hr>
 
         <div class="text-center">
           <button class="b_raised" mat-raised-button color="accent" (click)="picking()">Preparar Pedidos</button>
           <br><br>
           <button class="b_raised" mat-raised-button color="accent" (click)="stock()">Inventario</button>
+        </div>
+
+        <div class="mt-4">
+          <button mat-raised-button color="warn" (click)="logOut()">Log Out</button>
         </div>
 
       </div>

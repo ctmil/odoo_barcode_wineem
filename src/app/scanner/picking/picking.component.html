@@ -8,6 +8,11 @@
   <hr/>
  </a>
  <p *ngIf="alert != ''">{{alert}}</p>
+ <div class="col-12">
+    <button mat-raised-button class="b_raised mt-4" mat-raised-button color="accent" (click)="closeBoxes()">
+      Cajas
+    </button>
+ </div>
 </div>
 
 <div *ngIf="!loading && showLeader && !showOPs && !showPicking && !showResumen && !showClose">
@@ -151,6 +156,7 @@
 </div>
 
 <div *ngIf="!loading && showLeader && showOPs && showPicking && showResumen && showClose">
+    <h4>User: {{user}}</h4>
     <h5>Cerrar Cajas</h5>
     <div class="row mb-2 over-table">
       <div class="col-4">Nombre</div>
@@ -161,7 +167,11 @@
       <div class="col-4">{{p.name}}</div>
       <div class="col-4" *ngIf="p.lead == 'undefined Líder'">{{p.rep}}</div>
       <div class="col-4" *ngIf="p.lead != 'undefined Líder'">{{p.lead}}</div>
-      <div class="col-4 text-right"><button mat-raised-button (click)="closeBox(p.id, i)">{{p.state}}</button></div>
+      <div class="col-4 text-right">
+        <button mat-raised-button (click)="closeBox(p.id, i)" class="mb-2">{{p.state}}</button>
+        <button mat-raised-button (click)="printRC(p.id, i)" class="mb-2">RC</button>
+        <button mat-raised-button (click)="printEC(p.id, i)">EC</button>
+      </div>
       <hr/>
     </div>
 </div>

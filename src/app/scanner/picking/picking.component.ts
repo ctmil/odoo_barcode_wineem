@@ -714,6 +714,10 @@ export class PickingComponent implements OnInit, OnChanges {
   }
 
   public closeBoxes() {
+    this.showLeader = true;
+    this.showOPs = true;
+    this.showPicking = true;
+    this.showResumen = true;
     this.showClose = true;
 
     $.xmlrpc({
@@ -726,7 +730,7 @@ export class PickingComponent implements OnInit, OnChanges {
       success: (res: any, status: any, jqXHR: any) => {
         console.log('BOXES:', res[0]);
         for (let i = 0; i < res[0].length; i++) {
-          this.pBoxes.push({id: res[0][i].id, name: res[0][i].name, lead: res[0][i].rep_rep_id[1] + ' Líder', rep: res[0][i].rep_id[1], state: 'Abierta'});
+          this.pBoxes.push({id: res[0][i].id, name: res[0][i].name, lead: res[0][i].rep_rep_id[1] + ' Líder', rep: res[0][i].rep_id[1], state: 'A'});
         }
       },
       error: (jqXHR: any, status: any, error: any) => {
@@ -745,11 +749,42 @@ export class PickingComponent implements OnInit, OnChanges {
       }]],
       success: (response: any, status: any, jqXHR: any) => {
         console.log('Stock Box:', response);
-        this.pBoxes[i].state = 'Cerrada';
+        this.pBoxes[i].state = 'C';
       },
       error: (jqXHR: any, status: any, error: any) => {
         console.log('Error : ' + error );
         alert('La Caja no se puede Cerrar');
+      }
+    });
+  }
+
+  public printRC(id: number, i: number) {
+    $.xmlrpc({
+      url: this.server + '/report',
+      methodName: 'render_report',
+      crossDomain: true,
+      params: [this.db, this.uid, this.pass, 'uniqs_box_detailed_2.print', [id]],
+      success: (res: any, statusR: any, jqXHRR: any) => {
+        this.savebase64AsPDF(cordova.file.externalRootDirectory, this.pBoxes[i].name + '-RC-.pdf', res[0].result, 'application/pdf');
+      },
+      error: (jqXHRR: any, statusR: any, errorR: any) => {
+        console.log('Error : ' + errorR );
+      }
+    });
+  }
+
+  public printEC(id: number, i: number) {
+    console.log(this.pBoxes[i].name);
+    $.xmlrpc({
+      url: this.server + '/report',
+      methodName: 'render_report',
+      crossDomain: true,
+      params: [this.db, this.uid, this.pass, 'uniqs_box_label_2.print', [id]],
+      success: (res: any, statusR: any, jqXHRR: any) => {
+        this.savebase64AsPDF(cordova.file.externalRootDirectory, this.pBoxes[i].name + '-EC-.pdf', res[0].result, 'application/pdf');
+      },
+      error: (jqXHRR: any, statusR: any, errorR: any) => {
+        console.log('Error : ' + errorR );
       }
     });
   }
@@ -761,7 +796,6 @@ export class PickingComponent implements OnInit, OnChanges {
       crossDomain: true,
       params: [this.db, this.uid, this.pass, 'picking_packing_list_print', this.processItems],
       success: (res: any, statusR: any, jqXHRR: any) => {
-        console.log(res[0].result);
         this.savebase64AsPDF(cordova.file.externalRootDirectory, this.selP[0].name + '.pdf', res[0].result, 'application/pdf');
       },
       error: (jqXHRR: any, statusR: any, errorR: any) => {
