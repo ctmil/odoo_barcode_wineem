@@ -755,7 +755,6 @@ export class PickingComponent implements OnInit, OnChanges {
   }
 
   public getReportTag(id: number) {
-
     $.xmlrpc({
       url: this.server + '/report',
       methodName: 'render_report',
@@ -769,7 +768,6 @@ export class PickingComponent implements OnInit, OnChanges {
         console.log('Error : ' + errorR );
       }
     });
-    
   }
 
   b64toBlob(b64Data, contentType, sliceSize?): any {
@@ -804,8 +802,18 @@ export class PickingComponent implements OnInit, OnChanges {
                 fileWriter.write(DataBlob);
                 console.log('Folder Path' + folderpath + filename);
                 const finalPath = folderpath + filename;
-                // Probar: https://github.com/Evolution-36/cordova-plugin-file-opener2
-                cordova.InAppBrowser.open(finalPath, '_system');
+                cordova.plugins.fileOpener2.open(
+                  finalPath,
+                  'application/pdf',
+                  {
+                      error : function(e) {
+                          console.log('Error status: ' + e.status + ' - Error message: ' + e.message);
+                      },
+                      success : function () {
+                          console.log('file opened successfully');
+                      }
+                  }
+                );
 
             }, function() {
                 alert('No se puede guardar el archivo en ' + folderpath);
