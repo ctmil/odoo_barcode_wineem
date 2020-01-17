@@ -62,7 +62,7 @@
               <div class="col-3 text-center">Scan</div>
               <div class="col-3 text-center">Forzar</div>
           </div>
-          <div style="font-size:14px;" *ngFor="let p of pTable;index as i;" [className]="p.scan ? 'background-green row mb-2 pb-2 border-spe' : 'no-back row mb-2 pb-2 border-spe'">
+          <div style="font-size:14px;" *ngFor="let p of pTable;index as i;" [className]="p.scan && p.scan_qty == p.qty ? 'background-green row mb-2 pb-2 border-spe' : p.scan && p.scan_qty < p.qty ? 'background-yellow row mb-2 pb-2 border-spe' : 'no-back row mb-2 pb-2 border-spe'">
             <div class="col-2 text-uppercase">{{p.categ_id}}</div>
             <div class="col-3">{{p.sku}}</div>
             <div class="col-1 text-center">{{p.qty}}</div>
@@ -179,5 +179,11 @@
 <div class="mt-3">
   <button mat-raised-button color="primary" (click)="goOut()">
     Volver al Menu
+  </button>
+</div>
+
+<div class="check-button" *ngIf="isScanning">
+  <button mat-raised-button class="b_raised mt-4" color="primary">
+    Ver Resultados
   </button>
 </div>

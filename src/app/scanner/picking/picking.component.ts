@@ -41,6 +41,7 @@ export class PickingComponent implements OnInit, OnChanges {
   public showErr = false;
   ////////////////////////////
   public loading = true;
+  public isScanning = false;
   ////////////////////////////
   public pickings: Picking[] = [];
   public pickRep = [];
@@ -108,6 +109,7 @@ export class PickingComponent implements OnInit, OnChanges {
         this.showScann = false;
         this.showErr = false;
 
+        this.isScanning = true;
         cordova.plugins.barcodeScanner.scan(
           (result: any) => {
             this.barcode = result.text;
@@ -119,9 +121,11 @@ export class PickingComponent implements OnInit, OnChanges {
                 this.pTable[i].scan = true;
               }
             }
+            this.isScanning = false;
           },
           function (error: any) {
             console.log('Scanning failed: ' + error);
+            this.isScanning = false;
           },
           this.scanConfig
         );
@@ -740,22 +744,26 @@ export class PickingComponent implements OnInit, OnChanges {
   }
 
   public closeBox(id: number, i: number) {
-    $.xmlrpc({
-      url: this.server + '/object',
-      methodName: 'execute_kw',
-      crossDomain: true,
-      params: [this.db, this.uid, this.pass, 'stock.box', 'write', [ [id], {
-        state: 'closed'
-      }]],
-      success: (response: any, status: any, jqXHR: any) => {
-        console.log('Stock Box:', response);
-        this.pBoxes[i].state = 'C';
-      },
-      error: (jqXHR: any, status: any, error: any) => {
-        console.log('Error : ' + error );
-        alert('La Caja no se puede Cerrar');
-      }
-    });
+    const r = confirm('¿Está seguro que desea Cerrar la caja?');
+
+    if (r) {
+      $.xmlrpc({
+        url: this.server + '/object',
+        methodName: 'execute_kw',
+        crossDomain: true,
+        params: [this.db, this.uid, this.pass, 'stock.box', 'write', [ [id], {
+          state: 'closed'
+        }]],
+        success: (response: any, status: any, jqXHR: any) => {
+          console.log('Stock Box:', response);
+          this.pBoxes[i].state = 'C';
+        },
+        error: (jqXHR: any, status: any, error: any) => {
+          console.log('Error : ' + error );
+          alert('La Caja no se puede Cerrar');
+        }
+      });
+    }
   }
 
   public printRC(id: number, i: number) {

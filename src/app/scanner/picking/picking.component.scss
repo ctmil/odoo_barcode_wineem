@@ -23,10 +23,23 @@
     background-color:#00ff00;
     color: #000;
 }
+.background-yellow {
+    background-color:#ffff00;
+    color: #000;
+}
 .no-back {
     background-color:transparent;
 }
 .medium-btn {
     width:40%;
     font-size:18px;
+}
+.check-button {
+    width: 100%;
+    height: 100%;
+    background:
+    rgba(0,0,0,0.5);
+    position: fixed;
+    top: 0;
+    left: 0;
 }
