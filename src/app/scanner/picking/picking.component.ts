@@ -109,7 +109,10 @@ export class PickingComponent implements OnInit, OnChanges {
         this.showScann = false;
         this.showErr = false;
 
-        this.isScanning = true;
+        setTimeout(() => {
+          this.isScanning = true;
+        }, 1000);
+
         cordova.plugins.barcodeScanner.scan(
           (result: any) => {
             this.barcode = result.text;
