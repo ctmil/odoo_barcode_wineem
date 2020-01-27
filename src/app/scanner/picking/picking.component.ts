@@ -339,6 +339,7 @@ export class PickingComponent implements OnInit, OnChanges {
   }
 
   public getBox(id: number, picking: any): void {
+    this.pTable = [];
     console.log('Picking: ', picking[0], 'Caja: ', id);
 
     $.xmlrpc({
@@ -457,10 +458,14 @@ export class PickingComponent implements OnInit, OnChanges {
     console.log('Tabla:', this.pTable);
   }
 
-  public addQty(i: number){
-    if (this.pTable[i].scan_qty < this.pTable[i].qty) {
-      this.pTable[i].scan = true;
-      this.pTable[i].scan_qty++;
+  public addQty(i: number) {
+    const r = confirm('¿Desea forzar la cantidad del producto?');
+
+    if (r) {
+      if (this.pTable[i].scan_qty < this.pTable[i].qty) {
+        this.pTable[i].scan = true;
+        this.pTable[i].scan_qty++;
+      }
     }
   }
 
@@ -877,6 +882,39 @@ export class PickingComponent implements OnInit, OnChanges {
   }
 
   backReps(): void {
+    if (this.confirmed === false) {
+      $.xmlrpc({
+        url: this.server + '/object',
+        methodName: 'execute_kw',
+        crossDomain: true,
+        params: [this.db, this.uid, this.pass, 'stock.box', 'write', [ [this.box[0].id], {
+          state: 'closed'
+        }]],
+        success: (response: any, status: any, jqXHR: any) => {
+          console.log('Stock Box:', response);
+        },
+        error: (jqXHR: any, status: any, error: any) => {
+          console.log('Error : ' + error );
+          alert('La Caja no se puede Cerrar');
+        }
+      });
+
+      $.xmlrpc({
+        url: this.server + '/object',
+        methodName: 'execute_kw',
+        crossDomain: true,
+        params: [this.db, this.uid, this.pass, 'stock.order.picking', 'write', [ [this.selP[0].id], {
+          state: 'closed'
+        }]],
+        success: (response: any, status: any, jqXHR: any) => {
+          console.log('Stock Picking:', response);
+        },
+        error: (jqXHR: any, status: any, error: any) => {
+          console.log('Error : ' + error );
+        }
+      });
+    }
+
     this.showPicking = false;
     this.box = false;
     this.boxList = [];
