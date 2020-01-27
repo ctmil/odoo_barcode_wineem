@@ -3,16 +3,23 @@
 </div>
 
 <div *ngIf="!loading && !showLeader && !showOPs && !showPicking && !showResumen && !showClose">
- <a class="d-block" *ngFor="let rep of pickRep" (click)="readRep(rep.id)">
-  <h4>{{rep.name}} <small>({{rep.vals.length}})</small></h4>
-  <hr/>
- </a>
- <p *ngIf="alert != ''">{{alert}}</p>
- <div class="col-12">
+  <div *ngIf="showInternalOps">
+    <a class="d-block" *ngFor="let rep of pickRep" (click)="readRep(rep.id)">
+        <h4>{{rep.name}} <small>({{rep.vals.length}})</small></h4>
+        <hr/>
+    </a>
+  </div>
+  <p *ngIf="alert != ''">{{alert}}</p>
+  <div class="col-12" *ngIf="!showInternalOps">
+    <button mat-raised-button class="b_raised mt-4" mat-raised-button color="accent" (click)="showInternalOps = !showInternalOps">
+      OP
+    </button>
+  </div>
+  <div class="col-12" *ngIf="!showInternalOps">
     <button mat-raised-button class="b_raised mt-4" mat-raised-button color="accent" (click)="closeBoxes()">
       Cajas
     </button>
- </div>
+  </div>
 </div>
 
 <div *ngIf="!loading && showLeader && !showOPs && !showPicking && !showResumen && !showClose">

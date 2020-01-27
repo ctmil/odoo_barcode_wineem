@@ -48,6 +48,7 @@ export class PickingComponent implements OnInit, OnChanges {
   public repSel: any;
   public showLeader = false;
   public pickLeader = [];
+  public showInternalOps = false;
   public showOPs = false;
   public leaderSel: any;
   public showPicking = false;
@@ -375,9 +376,18 @@ export class PickingComponent implements OnInit, OnChanges {
             [ [['rep_id', '=', picking[0].rep[0]], ['state', '=', 'opened']] ],
             {'fields': ['name', 'id', 'rep_id', 'create_uid']}],
             success: (resB: any, statusB: any, jqXHRB: any) => {
+              const uidBox = [];
               for (const i of resB[0]) {
                 this.alertPicking = 'Ya hay una caja abierta por otro Usuario.';
                 this.boxList.push({name: i.name, id: i.id, u: i.create_uid[1]});
+                if (i.create_uid[0] === this.uid) {
+                  uidBox.push(i.id);
+                }
+              }
+
+              if (uidBox.length === 1) {
+                console.log('Caja', uidBox[0]);
+                this.selBox(uidBox[0]);
               }
             },
             error: (jqXHRB: any, statusB: any, errorB: any) => {
@@ -459,7 +469,7 @@ export class PickingComponent implements OnInit, OnChanges {
   }
 
   public addQty(i: number) {
-    const r = confirm('¿Desea forzar la cantidad del producto?');
+    const r = confirm('¿Seguro que desea forzar?');
 
     if (r) {
       if (this.pTable[i].scan_qty < this.pTable[i].qty) {
