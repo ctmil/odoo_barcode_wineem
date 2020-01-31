@@ -376,7 +376,7 @@ export class PickingComponent implements OnInit, OnChanges {
             [ [['rep_id', '=', picking[0].rep[0]], ['state', '=', 'opened']] ],
             {'fields': ['name', 'id', 'rep_id', 'create_uid']}],
             success: (resB: any, statusB: any, jqXHRB: any) => {
-              if (resB.length > 0) {
+              if (resB[0].length > 0) {
                 const uidBox = [];
                 for (const i of resB[0]) {
                   this.alertPicking = 'Ya hay una caja abierta por otro Usuario.';
@@ -391,7 +391,31 @@ export class PickingComponent implements OnInit, OnChanges {
                   this.selBox(uidBox[0]);
                 }
               } else {
-                
+                $.xmlrpc({
+                  url: this.server + '/object',
+                  methodName: 'execute_kw',
+                  crossDomain: true,
+                  params: [this.db, this.uid, this.pass, 'stock.box', 'search_read',
+                  [ [['rep_rep_id', '=', picking[0].rep[0]], ['state', '=', 'opened']] ],
+                  {'fields': ['name', 'id', 'rep_id', 'create_uid']}],
+                  success: (resBB: any, statusBB: any, jqXHRBB: any) => {
+                      const uidBox = [];
+                      for (const i of resBB[0]) {
+                        this.alertPicking = 'Ya hay una caja abierta por otro Usuario.';
+                        this.boxList.push({name: i.name, id: i.id, u: i.create_uid[1]});
+                        if (i.create_uid[0] === this.uid) {
+                          uidBox.push(i.id);
+                        }
+                      }
+                      if (uidBox.length === 1) {
+                        console.log('Caja', uidBox[0]);
+                        this.selBox(uidBox[0]);
+                      }
+                  },
+                  error: (jqXHRBB: any, statusBB: any, errorBB: any) => {
+                    console.log('Error : ' + errorBB );
+                  }
+                });
               }
             },
             error: (jqXHRB: any, statusB: any, errorB: any) => {
@@ -527,7 +551,7 @@ export class PickingComponent implements OnInit, OnChanges {
           crossDomain: true,
           params: [this.db, this.uid, this.pass, 'stock.move', 'write', [ [p.mid], {
             product_uom_qty: p.scan_qty,
-            state: 'assigned',
+            state: 'done',
             invoice_state: '2binvoiced'
           }]],
           success: (response: any, statusP: any, jqXHRP: any) => {
@@ -719,7 +743,7 @@ export class PickingComponent implements OnInit, OnChanges {
     this.trueProd = '';
     for (const i of this.pTable) {
       if (i.scan === true) {
-        this.trueProd += i.sku + ' - Cantidad: ' + i.qty + '\n';
+        this.trueProd += i.sku + ' - Cantidad: ' + i.scan_qty + '\n';
       }
     }
     $('#dialog').fadeIn(500);
@@ -852,7 +876,7 @@ export class PickingComponent implements OnInit, OnChanges {
     return blob;
   }
 
-  savebase64AsPDF(folderpath, filename, content, contentType): any{
+  savebase64AsPDF(folderpath, filename, content, contentType): any {
     const DataBlob = this.b64toBlob(content, contentType);
 
     console.log('Starting to write the file');
@@ -888,7 +912,7 @@ export class PickingComponent implements OnInit, OnChanges {
 
   reset(): void {
     for (const p of this.pTable) {
-      if(p.scan) {
+      if (p.scan) {
         p.scan = false;
         p.scan_qty = 0;
       }
@@ -901,27 +925,42 @@ export class PickingComponent implements OnInit, OnChanges {
         url: this.server + '/object',
         methodName: 'execute_kw',
         crossDomain: true,
-        params: [this.db, this.uid, this.pass, 'stock.box', 'write', [ [this.box[0].id], {
-          state: 'closed'
-        }]],
-        success: (response: any, status: any, jqXHR: any) => {
-          console.log('Stock Box:', response);
-        },
-        error: (jqXHR: any, status: any, error: any) => {
-          console.log('Error : ' + error );
-          alert('La Caja no se puede Cerrar');
-        }
-      });
+        params: [this.db, this.uid, this.pass, 'stock.box', 'search_read',
+        [ [['id', '=', this.box[0].id]] ],
+        {'fields': ['pickings_ids']}],
+        success: (res: any, status: any, jqXHR: any) => {
+          if (res[0][0].pickings_ids === []) {
+            $.xmlrpc({
+              url: this.server + '/object',
+              methodName: 'execute_kw',
+              crossDomain: true,
+              params: [this.db, this.uid, this.pass, 'stock.box', 'write', [ [this.box[0].id], {
+                state: 'closed'
+              }]],
+              success: (responseB: any, statusB: any, jqXHRB: any) => {
+                console.log('Stock Box:', responseB);
+              },
+              error: (jqXHRB: any, statusB: any, errorB: any) => {
+                console.log('Error : ' + errorB );
+                alert('La Caja no se puede Cerrar');
+              }
+            });
 
-      $.xmlrpc({
-        url: this.server + '/object',
-        methodName: 'execute_kw',
-        crossDomain: true,
-        params: [this.db, this.uid, this.pass, 'stock.order.picking', 'write', [ [this.selP[0].id], {
-          state: 'closed'
-        }]],
-        success: (response: any, status: any, jqXHR: any) => {
-          console.log('Stock Picking:', response);
+            $.xmlrpc({
+              url: this.server + '/object',
+              methodName: 'execute_kw',
+              crossDomain: true,
+              params: [this.db, this.uid, this.pass, 'stock.order.picking', 'write', [ [this.selP[0].id], {
+                state: 'closed'
+              }]],
+              success: (responseB: any, statusB: any, jqXHRB: any) => {
+                console.log('Stock Picking:', responseB);
+              },
+              error: (jqXHRB: any, statusB: any, error: any) => {
+                console.log('Error : ' + error );
+              }
+            });
+          }
         },
         error: (jqXHR: any, status: any, error: any) => {
           console.log('Error : ' + error );
@@ -956,27 +995,42 @@ export class PickingComponent implements OnInit, OnChanges {
         url: this.server + '/object',
         methodName: 'execute_kw',
         crossDomain: true,
-        params: [this.db, this.uid, this.pass, 'stock.box', 'write', [ [this.box[0].id], {
-          state: 'closed'
-        }]],
-        success: (response: any, status: any, jqXHR: any) => {
-          console.log('Stock Box:', response);
-        },
-        error: (jqXHR: any, status: any, error: any) => {
-          console.log('Error : ' + error );
-          alert('La Caja no se puede Cerrar');
-        }
-      });
+        params: [this.db, this.uid, this.pass, 'stock.box', 'search_read',
+        [ [['id', '=', this.box[0].id]] ],
+        {'fields': ['pickings_ids']}],
+        success: (res: any, status: any, jqXHR: any) => {
+          if (res[0][0].pickings_ids === []) {
+            $.xmlrpc({
+              url: this.server + '/object',
+              methodName: 'execute_kw',
+              crossDomain: true,
+              params: [this.db, this.uid, this.pass, 'stock.box', 'write', [ [this.box[0].id], {
+                state: 'closed'
+              }]],
+              success: (responseB: any, statusB: any, jqXHRB: any) => {
+                console.log('Stock Box:', responseB);
+              },
+              error: (jqXHRB: any, statusB: any, errorB: any) => {
+                console.log('Error : ' + errorB );
+                alert('La Caja no se puede Cerrar');
+              }
+            });
 
-      $.xmlrpc({
-        url: this.server + '/object',
-        methodName: 'execute_kw',
-        crossDomain: true,
-        params: [this.db, this.uid, this.pass, 'stock.order.picking', 'write', [ [this.selP[0].id], {
-          state: 'closed'
-        }]],
-        success: (response: any, status: any, jqXHR: any) => {
-          console.log('Stock Picking:', response);
+            $.xmlrpc({
+              url: this.server + '/object',
+              methodName: 'execute_kw',
+              crossDomain: true,
+              params: [this.db, this.uid, this.pass, 'stock.order.picking', 'write', [ [this.selP[0].id], {
+                state: 'closed'
+              }]],
+              success: (responseB: any, statusB: any, jqXHRB: any) => {
+                console.log('Stock Picking:', responseB);
+              },
+              error: (jqXHRB: any, statusB: any, error: any) => {
+                console.log('Error : ' + error );
+              }
+            });
+          }
         },
         error: (jqXHR: any, status: any, error: any) => {
           console.log('Error : ' + error );
