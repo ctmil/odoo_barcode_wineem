@@ -469,9 +469,9 @@ export class PickingComponent implements OnInit, OnChanges {
                   crossDomain: true,
                   params: [this.db, this.uid, this.pass, 'product.channel', 'search_read',
                   [ [['id', '=', resP[0][0].channel_id[0]]] ],
-                  {'fields': ['short_name']}],
+                  {'fields': ['short_name', 'sequence']}],
                   success: (resC: any, statusC: any, jqXHRC: any) => {
-                    categ = resC[0][0].short_name;
+                    categ = resC[0][0].sequence +" "+resC[0][0].short_name;
                     this.pTable.push({mid: mid, id: id, pid: pid, categ_id: categ, sku: default_code.replace(/\s/g, ''), qty: qty, ean13: ean13, scan: false, scan_qty: 0});
                   },
                   error: (jqXHRC: any, statusC: any, errorC: any) => {
@@ -754,6 +754,10 @@ export class PickingComponent implements OnInit, OnChanges {
     for (const i of this.pTable) {
       if (i.scan === false) {
         this.trueProd += i.sku + ' - Cantidad: ' + (i.qty - i.scan_qty) + '\n';
+      } else {
+        if (i.qty !== i.scan_qty) {
+          this.trueProd += i.sku + ' - Cantidad: ' + (i.qty - i.scan_qty) + '\n';
+        }
       }
     }
     $('#dialog').fadeIn(500);
