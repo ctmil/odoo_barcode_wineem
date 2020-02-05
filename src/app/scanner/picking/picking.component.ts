@@ -471,8 +471,10 @@ export class PickingComponent implements OnInit, OnChanges {
                   [ [['id', '=', resP[0][0].channel_id[0]]] ],
                   {'fields': ['short_name', 'sequence']}],
                   success: (resC: any, statusC: any, jqXHRC: any) => {
-                    categ = resC[0][0].sequence +" "+resC[0][0].short_name;
-                    this.pTable.push({mid: mid, id: id, pid: pid, categ_id: categ, sku: default_code.replace(/\s/g, ''), qty: qty, ean13: ean13, scan: false, scan_qty: 0});
+                    categ = resC[0][0].short_name;
+                    this.pTable.push({s: resC[0][0].sequence, mid: mid, id: id, pid: pid, categ_id: categ, sku: default_code.replace(/\s/g, ''), qty: qty, ean13: ean13, scan: false, scan_qty: 0});
+                    this.pTable.sort((a, b) => (a.sequence > b.sequence) ? 1 : -1);
+                    this.pTable.sort((a, b) => (a.sku > b.sku) ? 1 : -1);
                   },
                   error: (jqXHRC: any, statusC: any, errorC: any) => {
                     console.log('Error : ' + errorC );
@@ -480,7 +482,9 @@ export class PickingComponent implements OnInit, OnChanges {
                 });
               } else {
                 categ = 'N/A';
-                this.pTable.push({mid: mid, id: id, pid: pid, categ_id: categ, sku: default_code.replace(/\s/g, ''), qty: qty, ean13: ean13, scan: false, scan_qty: 0});
+                this.pTable.push({s: 0, mid: mid, id: id, pid: pid, categ_id: categ, sku: default_code.replace(/\s/g, ''), qty: qty, ean13: ean13, scan: false, scan_qty: 0});
+                this.pTable.sort((a, b) => (a.sequence > b.sequence) ? 1 : -1);
+                this.pTable.sort((a, b) => (a.sku > b.sku) ? 1 : -1);
               }
             },
             error: (jqXHRP: any, statusP: any, errorP: any) => {
@@ -725,6 +729,9 @@ export class PickingComponent implements OnInit, OnChanges {
           for (const i of this.pTable) {
             if (i.scan === true) {
               this.trueQty += i.scan_qty;
+              if (i.qty !== i.scan_qty) {
+                this.falseQty += (i.qty - i.scan_qty);
+              }
             } else {
               this.falseQty += (i.qty - i.scan_qty);
             }
