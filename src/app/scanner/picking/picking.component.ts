@@ -474,7 +474,13 @@ export class PickingComponent implements OnInit, OnChanges {
                     categ = resC[0][0].short_name;
                     this.pTable.push({s: resC[0][0].sequence, mid: mid, id: id, pid: pid, categ_id: categ, sku: default_code.replace(/\s/g, ''), qty: qty, ean13: ean13, scan: false, scan_qty: 0});
                     this.pTable.sort((a, b) => (a.s > b.s) ? 1 : -1);
-                    this.pTable.sort((a, b) => (a.sku > b.sku) ? 1 : -1);
+                    this.pTable.sort(function(a, b) {
+                      if (a.s === b.s) {
+                        return (a.sku > b.sku) ? 1 : -1;
+                      }
+                      return (a.s > b.s) ? 1 : -1;
+                    });
+                    console.log(this.pTable);
                   },
                   error: (jqXHRC: any, statusC: any, errorC: any) => {
                     console.log('Error : ' + errorC );
@@ -484,7 +490,13 @@ export class PickingComponent implements OnInit, OnChanges {
                 categ = 'N/A';
                 this.pTable.push({s: 0, mid: mid, id: id, pid: pid, categ_id: categ, sku: default_code.replace(/\s/g, ''), qty: qty, ean13: ean13, scan: false, scan_qty: 0});
                 this.pTable.sort((a, b) => (a.s > b.s) ? 1 : -1);
-                this.pTable.sort((a, b) => (a.sku > b.sku) ? 1 : -1);
+                this.pTable.sort(function(a, b) {
+                  if (a.s === b.s) {
+                     return (a.sku > b.sku) ? 1 : -1;
+                  }
+                  return (a.s > b.s) ? 1 : -1;
+                });
+                console.log(this.pTable);
               }
             },
             error: (jqXHRP: any, statusP: any, errorP: any) => {
