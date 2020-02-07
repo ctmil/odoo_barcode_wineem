@@ -327,7 +327,8 @@ export class PickingComponent implements OnInit, OnChanges {
         name: 'BOX-APP-' + Math.floor((Math.random() * 50000)),
         state: 'opened',
         rep_id: picking_rep,
-        rep_rep_id: picking_rep_rep
+        rep_rep_id: picking_rep_rep,
+        rep_shipping_id: picking_rep
       }]],
       success: (res: any, status: any, jqXHR: any) => {
         console.log(res);
