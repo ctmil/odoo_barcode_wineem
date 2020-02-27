@@ -744,6 +744,25 @@ export class PickingComponent implements OnInit, OnChanges {
           console.log('Error : ' + errorP );
         }
       });
+
+      if (isScan === false) {
+        for (const i of this.pTable) {
+          $.xmlrpc({
+            url: this.server + '/object',
+            methodName: 'execute_kw',
+            crossDomain: true,
+            params: [this.db, this.uid, this.pass, 'stock.move', 'write', [ [i.mid], {
+              state: 'done'
+            }]],
+            success: (responseP: any, statusp: any, jqXHRP: any) => {
+              console.log('Write Stock Box:', responseP);
+            },
+            error: (jqXHRP: any, statusP: any, errorP: any) => {
+              console.log('Error : ' + errorP );
+            }
+          });
+        }
+      }
     }, 1000 * this.pTable.length);
   }
 
