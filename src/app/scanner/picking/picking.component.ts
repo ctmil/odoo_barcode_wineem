@@ -324,7 +324,7 @@ export class PickingComponent implements OnInit, OnChanges {
       methodName: 'execute_kw',
       crossDomain: true,
       params: [this.db, this.uid, this.pass, 'stock.box', 'create', [{
-        name: 'BOX-APP-' + Math.floor((Math.random() * 50000)),
+        name: 'BAPK-' + Math.floor((Math.random() * 5000)),
         state: 'opened',
         rep_id: picking_rep,
         rep_rep_id: picking_rep_rep,
