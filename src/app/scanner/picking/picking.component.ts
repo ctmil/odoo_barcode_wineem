@@ -752,10 +752,24 @@ export class PickingComponent implements OnInit, OnChanges {
             methodName: 'execute_kw',
             crossDomain: true,
             params: [this.db, this.uid, this.pass, 'stock.move', 'write', [ [i.mid], {
-              state: 'done'
+              state: 'draft'
             }]],
             success: (responseP: any, statusp: any, jqXHRP: any) => {
               console.log('Write Stock Box:', responseP);
+              $.xmlrpc({
+                url: this.server + '/object',
+                methodName: 'execute_kw',
+                crossDomain: true,
+                params: [this.db, this.uid, this.pass, 'stock.move', 'unlink', [ [i.mid]]],
+                success: (response: any, status: any, jqXHR: any) => {
+                  console.log('Delete Move:', response);
+                },
+                error: (jqXHR: any, status: any, error: any) => {
+                  console.log('Error : ' + error);
+                }
+              });
+
+              
             },
             error: (jqXHRP: any, statusP: any, errorP: any) => {
               console.log('Error : ' + errorP );
