@@ -589,7 +589,8 @@ export class PickingComponent implements OnInit, OnChanges {
                 location_dest_id: 9,
                 name: 'STOCK-APP-' + Math.floor((Math.random() * 50000)),
                 partner_id: resM[0][0].partner_id[0],
-                origin: resM[0][0].origin
+                origin: resM[0][0].origin,
+                split_from: p.mid
               }]],
               success: (response: any, statusP: any, jqXHRP: any) => {
                 console.log('New Stock:', response);
