@@ -575,13 +575,15 @@ export class PickingComponent implements OnInit, OnChanges {
           crossDomain: true,
           params: [this.db, this.uid, this.pass, 'stock.move', 'search_read',
           [ [['id', '=', p.mid]] ],
-          {'fields': ['partner_id', 'origin']}],
+          {'fields': ['partner_id', 'origin', 'sale_line_id']}],
           success: (resM: any, statusM: any, jqXHRM: any) => {
             $.xmlrpc({
               url: this.server + '/object',
               methodName: 'execute_kw',
               crossDomain: true,
               params: [this.db, this.uid, this.pass, 'stock.move', 'create', [{
+                split_from: resM[0][0].id,
+                sale_line_id: resM[0][0].sale_line_id[0],
                 product_id: p.pid,
                 product_uom_qty: p.qty - p.scan_qty,
                 product_uom: 1,
@@ -590,7 +592,6 @@ export class PickingComponent implements OnInit, OnChanges {
                 name: 'STOCK-APP-' + Math.floor((Math.random() * 50000)),
                 partner_id: resM[0][0].partner_id[0],
                 origin: resM[0][0].origin,
-                split_from: p.mid
               }]],
               success: (response: any, statusP: any, jqXHRP: any) => {
                 console.log('New Stock:', response);
