@@ -474,8 +474,8 @@ export class PickingComponent implements OnInit, OnChanges {
                   success: (resC: any, statusC: any, jqXHRC: any) => {
                     categ = resC[0][0].short_name;
                     this.pTable.push({s: resC[0][0].sequence, mid: mid, id: id, pid: pid, categ_id: categ, sku: default_code.replace(/\s/g, ''), qty: qty, ean13: ean13, scan: false, scan_qty: 0});
-                    this.pTable.sort((a, b) => (a.s > b.s) ? 1 : -1);
                     this.pTable.sort((a, b) => (a.sku > b.sku) ? 1 : -1);
+                    this.pTable.sort((a, b) => (a.s > b.s) ? 1 : -1);
                   },
                   error: (jqXHRC: any, statusC: any, errorC: any) => {
                     console.log('Error : ' + errorC );
@@ -484,8 +484,8 @@ export class PickingComponent implements OnInit, OnChanges {
               } else {
                 categ = 'N/A';
                 this.pTable.push({s: 0, mid: mid, id: id, pid: pid, categ_id: categ, sku: default_code.replace(/\s/g, ''), qty: qty, ean13: ean13, scan: false, scan_qty: 0});
-                this.pTable.sort((a, b) => (a.s > b.s) ? 1 : -1);
                 this.pTable.sort((a, b) => (a.sku > b.sku) ? 1 : -1);
+                this.pTable.sort((a, b) => (a.s > b.s) ? 1 : -1);
               }
             },
             error: (jqXHRP: any, statusP: any, errorP: any) => {
@@ -523,7 +523,7 @@ export class PickingComponent implements OnInit, OnChanges {
     let moves = [];
     let pickingMoves = [];
     let outMoves = [];
-    let oldMoves = []
+    let oldMoves = [];
 
     for (const p of this.pTable) {
       console.log(p);
