@@ -821,12 +821,18 @@ export class PickingComponent implements OnInit, OnChanges {
     const r = confirm('¿Está seguro que desea Cerrar la caja?');
 
     if (r) {
+      const today = new Date();
+      const dd = String(today.getDate()).padStart(2, '0');
+      const mm = String(today.getMonth() + 1).padStart(2, '0');
+      const yyyy = today.getFullYear();
+
       $.xmlrpc({
         url: this.server + '/object',
         methodName: 'execute_kw',
         crossDomain: true,
         params: [this.db, this.uid, this.pass, 'stock.box', 'write', [ [id], {
-          state: 'closed'
+          state: 'closed',
+          date_closed: yyyy + '-' + mm + '-' + dd
         }]],
         success: (response: any, status: any, jqXHR: any) => {
           console.log('Stock Box:', response);
