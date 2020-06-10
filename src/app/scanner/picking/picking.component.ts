@@ -147,7 +147,7 @@ export class PickingComponent implements OnInit, OnChanges {
       methodName: 'execute_kw',
       crossDomain: true,
       params: [db, uid, pass, 'stock.picking.order', 'search_read', [ [['user', '=', uid], ['state', '=', 'planned']] ],
-      {'fields': ['name', 'id', 'partner_id', 'move_ids', 'rep', 'leader'], 'limit': 5}],
+      {'fields': ['name', 'id', 'partner_id', 'move_ids', 'rep', 'leader']}],
       success: (response: any, status: any, jqXHR: any) => {
         if (response) {
           for (let i = 0; i < response[0].length; i++) {
@@ -474,7 +474,7 @@ export class PickingComponent implements OnInit, OnChanges {
                   success: (resC: any, statusC: any, jqXHRC: any) => {
                     categ = resC[0][0].short_name;
                     this.pTable.push({s: resC[0][0].sequence, mid: mid, id: id, pid: pid, categ_id: categ, sku: default_code.replace(/\s/g, ''), qty: qty, ean13: ean13, scan: false, scan_qty: 0});
-                    this.pTable.sort((a, b) => (a.sku > b.sku) ? 1 : -1);
+                    this.pTable.sort((a, b) => (b.sku > a.sku) ? 1 : -1);
                     this.pTable.sort((a, b) => (a.s > b.s) ? 1 : -1);
                   },
                   error: (jqXHRC: any, statusC: any, errorC: any) => {
@@ -484,7 +484,7 @@ export class PickingComponent implements OnInit, OnChanges {
               } else {
                 categ = 'N/A';
                 this.pTable.push({s: 0, mid: mid, id: id, pid: pid, categ_id: categ, sku: default_code.replace(/\s/g, ''), qty: qty, ean13: ean13, scan: false, scan_qty: 0});
-                this.pTable.sort((a, b) => (a.sku > b.sku) ? 1 : -1);
+                this.pTable.sort((a, b) => (b.sku > a.sku) ? 1 : -1);
                 this.pTable.sort((a, b) => (a.s > b.s) ? 1 : -1);
               }
             },
