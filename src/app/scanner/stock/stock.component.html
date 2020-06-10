@@ -19,5 +19,5 @@
 </div>
 
 <div id="checkStock" *ngIf="checkStockVisible">
-    <app-checkstock></app-checkstock>
+    <app-checkstock [server]="server" [db]="db" [user]="user" [pass]="pass" [uid]="uid"></app-checkstock>
 </div>
