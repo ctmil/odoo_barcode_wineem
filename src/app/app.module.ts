@@ -14,13 +14,15 @@ import { AppComponent } from './app.component';
 import { ScannerComponent } from './scanner/scanner.component';
 import { PickingComponent } from './scanner/picking/picking.component';
 import { StockComponent } from './scanner/stock/stock.component';
+import { CheckstockComponent } from './scanner/stock/checkstock/checkstock.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ScannerComponent,
     PickingComponent,
-    StockComponent
+    StockComponent,
+    CheckstockComponent
   ],
   imports: [
     BrowserModule,

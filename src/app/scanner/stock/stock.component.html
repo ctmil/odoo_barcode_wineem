@@ -1,4 +1,23 @@
-<button class="b_raised mb-3" mat-raised-button color="accent">Agregar Inventario</button>
-<button class="b_raised mb-3" mat-raised-button color="accent">Ajustar Inventario</button>
-<button class="b_raised mb-3" mat-raised-button color="accent">Consultar Inventario</button>
+<div id="navStock" *ngIf="navStock">
+    <button class="b_raised mb-3" mat-raised-button color="accent" (click)="addStock()">
+        Agregar Inventario
+    </button>
+    <button class="b_raised mb-3" mat-raised-button color="accent" (click)="fixStock()">
+        Ajustar Inventario
+    </button>
+    <button class="b_raised mb-3" mat-raised-button color="accent" (click)="checkStock()">
+        Consultar Inventario
+    </button>
+</div>
 
+<div id="addStock" *ngIf="addStockVisible">
+
+</div>
+
+<div id="fixStock" *ngIf="fixStockVisible">
+
+</div>
+
+<div id="checkStock" *ngIf="checkStockVisible">
+    <app-checkstock></app-checkstock>
+</div>

@@ -29,24 +29,11 @@ export class StockComponent implements OnInit, OnChanges {
   @Input('logged') logged = false;
   @Output() log = new EventEmitter();
   ////////////////////////////
-  public barcode = '';
-  public barcode_format = '';
-  public p_scanned = '';
-  public pr_scanned = '';
-  public showScann = false;
-  public showErr = false;
-  ////////////////////////////
-  public scanConfig = {
-    preferFrontCamera : false,    // iOS and Android
-    showFlipCameraButton : false, // iOS and Android
-    showTorchButton : true,       // iOS and Android
-    torchOn: false,               // Android, launch with the torch switched on (if available)
-    prompt : 'Place a barcode inside the scan area', // Android
-    resultDisplayDuration: 0,     // Time of show
-    orientation : 'portrait',     // Android only (portrait|landscape), default unset so it rotates with the device
-    disableAnimations : true,     // iOS
-    disableSuccessBeep: false     // iOS and Android
-  };
+
+  navStock = true;
+  addStockVisible = false;
+  fixStockVisible = false;
+  checkStockVisible = false;
 
   constructor() { }
 
@@ -60,29 +47,19 @@ export class StockComponent implements OnInit, OnChanges {
 
   // Internal use funs
 
-  /* Scann Barcode Function */
-  public startScann(): void {
-    this.barcode = '';
-    this.barcode_format = '';
-    this.p_scanned = '';
-    this.pr_scanned = '';
-    this.showScann = false;
-    this.showErr = false;
+  public addStock(): void {
+    this.navStock = false;
+    this.addStockVisible = true;
+  }
 
-    cordova.plugins.barcodeScanner.scan(
-      (result: any) => {
-        this.barcode = result.text;
-        this.barcode_format = result.format;
-        console.log('We got a barcode\n' +
-                    'Result: ' + result.text + '\n' +
-                    'Format: ' + result.format + '\n' +
-                    'Cancelled: ' + result.cancelled);
-      },
-      function (error: any) {
-        console.log('Scanning failed: ' + error);
-      },
-      this.scanConfig
-    );
+  public fixStock(): void {
+    this.navStock = false;
+    this.fixStockVisible = true;
+  }
+
+  public checkStock(): void {
+    this.navStock = false;
+    this.checkStockVisible = true;
   }
 
   // END - Internal use funs
