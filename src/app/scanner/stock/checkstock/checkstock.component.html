@@ -1,3 +1,13 @@
-<p>
-  checkstock works!
-</p>
+<div style="height:100px;">
+  <button mat-raised-button color="primary" class="w-100" (click)="search()">
+    Ver Información
+  </button>
+  <div *ngIf="showProduct == true" class="mt-3">
+    <h5>
+      {{product.name}}
+    </h5>
+    <h6>
+      Cantidad: {{product.qty_available}} unidades
+    </h6>
+  </div>
+</div>
