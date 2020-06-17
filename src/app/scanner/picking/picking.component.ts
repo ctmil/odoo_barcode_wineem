@@ -741,6 +741,14 @@ export class PickingComponent implements OnInit, OnChanges {
         });
       }
 
+
+      const today = new Date();
+      const dd = String(today.getDate()).padStart(2, '0');
+      const mm = String(today.getMonth() + 1).padStart(2, '0');
+      const yyyy = today.getFullYear();
+      const ss = String(today.getSeconds());
+      const ii = String(today.getMinutes());
+      const hh = String(today.getHours());
       $.xmlrpc({
         url: this.server + '/object',
         methodName: 'execute_kw',
@@ -748,6 +756,7 @@ export class PickingComponent implements OnInit, OnChanges {
         params: [this.db, this.uid, this.pass, 'stock.picking.order', 'write', [ [this.selP[0].id], {
           state: 'done',
           move_ids: [[6, 0, moves]],
+          confirmed_on: yyyy + '-' + mm + '-' + dd + ' ' + hh + ':' + ii + ':' + ss
         }]],
         success: (responseP: any, statusp: any, jqXHRP: any) => {
           console.log('Write picking Order:', responseP);
