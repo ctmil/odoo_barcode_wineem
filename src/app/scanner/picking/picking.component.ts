@@ -534,6 +534,9 @@ export class PickingComponent implements OnInit, OnChanges {
         const dd = String(today.getDate()).padStart(2, '0');
         const mm = String(today.getMonth() + 1).padStart(2, '0');
         const yyyy = today.getFullYear();
+        const ss = String(today.getSeconds());
+        const ii = String(today.getMinutes());
+        const hh = String(today.getHours());
         $.xmlrpc({
           url: this.server + '/object',
           methodName: 'execute_kw',
@@ -541,7 +544,7 @@ export class PickingComponent implements OnInit, OnChanges {
           params: [this.db, this.uid, this.pass, 'stock.move', 'write', [ [p.mid], {
             product_uom_qty: p.scan_qty,
             state: 'done',
-            date: yyyy + '-' + mm + '-' + dd
+            date: yyyy + '-' + mm + '-' + dd + ' ' + hh + ':' + ii + ':' + ss
           }]],
           success: (response: any, statusP: any, jqXHRP: any) => {
             console.log('Stock:', response);
