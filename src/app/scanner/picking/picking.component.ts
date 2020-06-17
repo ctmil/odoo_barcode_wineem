@@ -530,13 +530,18 @@ export class PickingComponent implements OnInit, OnChanges {
       if (p.scan && p.qty === p.scan_qty) {
         pickings.push(p.id);
         isScan = true;
+        const today = new Date();
+        const dd = String(today.getDate()).padStart(2, '0');
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const yyyy = today.getFullYear();
         $.xmlrpc({
           url: this.server + '/object',
           methodName: 'execute_kw',
           crossDomain: true,
           params: [this.db, this.uid, this.pass, 'stock.move', 'write', [ [p.mid], {
             product_uom_qty: p.scan_qty,
-            state: 'done'
+            state: 'done',
+            date: yyyy + '-' + mm + '-' + dd
           }]],
           success: (response: any, statusP: any, jqXHRP: any) => {
             console.log('Stock:', response);
