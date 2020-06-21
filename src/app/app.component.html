@@ -12,15 +12,15 @@
     <div class="col-12">
         <form #form (submit)="logIn($event)">
             <mat-form-field class="mat-input">
-              <mat-label>User</mat-label>
-              <input matInput type="text" name="user" [value]="odoo_user_value" placeholder="your admin user" required>
+              <mat-label>Usuario</mat-label>
+              <input matInput type="text" name="user" [value]="odoo_user_value" placeholder="Usuario" required>
             </mat-form-field>
             <mat-form-field class="mat-input">
-              <mat-label>Password</mat-label>
-              <input matInput type="password" name="pass" [value]="odoo_pass_value" placeholder="your admin password" required>
+              <mat-label>Contraseña</mat-label>
+              <input matInput type="password" name="pass" [value]="odoo_pass_value" placeholder="Contraseña" required>
             </mat-form-field>
             <div class="mat-button">
-              <button mat-raised-button color="primary">Log in</button>
+              <button mat-raised-button color="primary">Ingresar a Wineem</button>
             </div>
         </form>
     </div>
