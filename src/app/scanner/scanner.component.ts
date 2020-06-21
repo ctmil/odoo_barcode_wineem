@@ -6,21 +6,14 @@ import { Component, OnInit, OnChanges, Input, Output, EventEmitter } from '@angu
   styleUrls: ['./scanner.component.scss']
 })
 export class ScannerComponent implements OnInit, OnChanges {
-  // tslint:disable-next-line: no-input-rename
-  @Input('server') server = '';
-  // tslint:disable-next-line: no-input-rename
-  @Input('db') db = '';
-  // tslint:disable-next-line: no-input-rename
-  @Input('user') user = '';
-  // tslint:disable-next-line: no-input-rename
-  @Input('pass') pass = '';
-  // tslint:disable-next-line: no-input-rename
-  @Input('uid') uid = 0;
+  @Input() server = '';
+  @Input() db = '';
+  @Input() user = '';
+  @Input() pass = '';
+  @Input() uid = 0;
   ////////////////////////////////////////////
-  // tslint:disable-next-line: no-input-rename
-  @Input('inLoad') inLoad = true;
-  // tslint:disable-next-line: no-input-rename
-  @Input('logged') logged = false;
+  @Input() inLoad = true;
+  @Input() logged = false;
   @Output() log = new EventEmitter();
   ////////////////////////////
   public showPicking = false;
