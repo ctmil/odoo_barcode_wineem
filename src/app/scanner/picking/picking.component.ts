@@ -536,7 +536,7 @@ export class PickingComponent implements OnInit, OnChanges {
         const yyyy = today.getFullYear();
         const ss = String(today.getSeconds());
         const ii = String(today.getMinutes());
-        const hh = String(today.getHours());
+        const hh = String(today.setHours(today.getHours() + 3));
         $.xmlrpc({
           url: this.server + '/object',
           methodName: 'execute_kw',
@@ -741,14 +741,13 @@ export class PickingComponent implements OnInit, OnChanges {
         });
       }
 
-
       const today = new Date();
       const dd = String(today.getDate()).padStart(2, '0');
       const mm = String(today.getMonth() + 1).padStart(2, '0');
       const yyyy = today.getFullYear();
       const ss = String(today.getSeconds());
       const ii = String(today.getMinutes());
-      const hh = String(today.getHours());
+      const hh = String(today.setHours(today.getHours() + 3));
       $.xmlrpc({
         url: this.server + '/object',
         methodName: 'execute_kw',
