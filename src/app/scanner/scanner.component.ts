@@ -19,6 +19,7 @@ export class ScannerComponent implements OnInit, OnChanges {
   public showPicking = false;
   public showStock = false;
   ////////////////////////////
+  safe = 'normal';
 
   constructor() { }
 

@@ -56,3 +56,19 @@ hr{
     padding: 5px 20px;
     width: 100%;
 }
+.dot {
+    height: 15px;
+    width: 15px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+}
+.red-dot {
+    background-color: #ff0000;
+}
+.green-dot {
+    background-color: #00ff00;
+}
+.orange-dot {
+    background-color: #ff9100;
+}

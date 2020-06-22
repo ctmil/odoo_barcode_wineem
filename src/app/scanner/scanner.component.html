@@ -16,7 +16,13 @@
 
         <hr />
         <div>
-          <p>Salud del Servidor: </p>
+          <h6>
+            Salud del Servidor:
+            <span *ngIf="safe == 'good'"><span class="dot green-dot"></span> Muy buena</span>
+            <span *ngIf="safe == 'normal'"><span class="dot"></span> Normal</span>
+            <span *ngIf="safe == 'slow'"><span class="dot orange-bot"></span> Lento</span>
+            <span *ngIf="safe == 'bad'"><span class="dot red-dot"></span> Mala - Se recomienda no entrar</span>
+          </h6>
         </div>
         <hr />
 
