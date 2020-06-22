@@ -20,8 +20,10 @@
             Salud del Servidor:
             <span *ngIf="safe == 'good'"><span class="dot green-dot"></span> Muy buena</span>
             <span *ngIf="safe == 'normal'"><span class="dot"></span> Normal</span>
-            <span *ngIf="safe == 'slow'"><span class="dot orange-bot"></span> Lento</span>
-            <span *ngIf="safe == 'bad'"><span class="dot red-dot"></span> Mala - Se recomienda no entrar</span>
+            <span *ngIf="safe == 'slow'"><span class="dot orange-dot"></span> Lento</span>
+            <span *ngIf="safe == 'bad'"><span class="dot red-dot"></span> Mala</span>
+            <span *ngIf="safe == 'critical'"><span class="dot red-dot"></span> Crítica</span>
+            <span> ({{timer}} ms)</span>
           </h6>
         </div>
         <hr />
