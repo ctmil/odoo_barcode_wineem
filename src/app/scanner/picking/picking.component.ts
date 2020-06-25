@@ -466,7 +466,18 @@ export class PickingComponent implements OnInit, OnChanges {
                   {'fields': ['short_name', 'sequence']}],
                   success: (resC: any, statusC: any, jqXHRC: any) => {
                     categ = resC[0][0].short_name;
-                    this.pTable.push({s: resC[0][0].sequence, mid: mid, id: id, pid: pid, categ_id: categ, sku: default_code.replace(/\s/g, ''), qty: qty, ean13: ean13, scan: false, scan_qty: 0});
+                    this.pTable.push({
+                      s: resC[0][0].sequence,
+                      mid: mid,
+                      id: id,
+                      pid: pid,
+                      categ_id: categ,
+                      sku: default_code.replace(/\s/g, ''),
+                      qty: qty,
+                      ean13: ean13,
+                      scan: false,
+                      scan_qty: 0
+                    });
                     this.pTable.sort((a, b) => (b.sku > a.sku) ? 1 : -1);
                     this.pTable.sort((a, b) => (a.s > b.s) ? 1 : -1);
                   },
@@ -476,7 +487,18 @@ export class PickingComponent implements OnInit, OnChanges {
                 });
               } else {
                 categ = 'N/A';
-                this.pTable.push({s: 0, mid: mid, id: id, pid: pid, categ_id: categ, sku: default_code.replace(/\s/g, ''), qty: qty, ean13: ean13, scan: false, scan_qty: 0});
+                this.pTable.push({
+                  s: 0,
+                  mid: mid,
+                  id: id,
+                  pid: pid,
+                  categ_id: categ,
+                  sku: default_code.replace(/\s/g, ''),
+                  qty: qty,
+                  ean13: ean13,
+                  scan: false,
+                  scan_qty: 0
+                });
                 this.pTable.sort((a, b) => (b.sku > a.sku) ? 1 : -1);
                 this.pTable.sort((a, b) => (a.s > b.s) ? 1 : -1);
               }
@@ -516,7 +538,6 @@ export class PickingComponent implements OnInit, OnChanges {
     let moves = [];
     let pickingMoves = [];
     let outMoves = [];
-    let oldMoves = [];
 
     for (const p of this.pTable) {
       console.log(p);
@@ -817,7 +838,13 @@ export class PickingComponent implements OnInit, OnChanges {
       success: (res: any, status: any, jqXHR: any) => {
         console.log('BOXES:', res[0]);
         for (let i = 0; i < res[0].length; i++) {
-          this.pBoxes.push({id: res[0][i].id, name: res[0][i].name, lead: res[0][i].rep_rep_id[1] + ' Líder', rep: res[0][i].rep_id[1], state: 'A'});
+          this.pBoxes.push({
+            id: res[0][i].id,
+            name: res[0][i].name,
+            lead: res[0][i].rep_rep_id[1] + ' Líder',
+            rep: res[0][i].rep_id[1],
+            state: 'A'
+          });
         }
       },
       error: (jqXHR: any, status: any, error: any) => {
