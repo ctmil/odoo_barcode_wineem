@@ -539,105 +539,144 @@ export class PickingComponent implements OnInit, OnChanges {
     let pickingMoves = [];
     let outMoves = [];
 
+    const today = new Date();
+    const dd = String(today.getDate()).padStart(2, '0');
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const yyyy = today.getFullYear();
+    const ss = String(today.getSeconds());
+    const ii = String(today.getMinutes());
+    const hh = String(today.getUTCHours());
+
     for (const p of this.pTable) {
       console.log(p);
       if (p.scan && p.qty === p.scan_qty) {
         pickings.push(p.id);
         isScan = true;
-        const today = new Date();
-        const dd = String(today.getDate()).padStart(2, '0');
-        const mm = String(today.getMonth() + 1).padStart(2, '0');
-        const yyyy = today.getFullYear();
-        const ss = String(today.getSeconds());
-        const ii = String(today.getMinutes());
-        const hh = String(today.getUTCHours());
         $.xmlrpc({
           url: this.server + '/object',
           methodName: 'execute_kw',
           crossDomain: true,
-          params: [this.db, this.uid, this.pass, 'stock.move', 'write', [ [p.mid], {
-            product_uom_qty: p.scan_qty,
-            state: 'done',
-            date: yyyy + '-' + mm + '-' + dd + ' ' + hh + ':' + ii + ':' + ss
+          params: [this.db, this.uid, this.pass, 'stock.quant', 'create', [{
+            product_id: p.pid,
+            qty: p.scan_qty * -1,
+            location_id: 12,
+            in_date: yyyy + '-' + mm + '-' + dd + ' ' + hh + ':' + ii + ':' + ss
           }]],
-          success: (response: any, statusP: any, jqXHRP: any) => {
-            console.log('Stock:', response);
-            moves.push(p.mid);
-            pickingMoves.push({p: p.id, m: p.mid});
+          success: (responseP: any, statusp: any, jqXHRP: any) => {
+            console.log('Stock  Quant: ', responseP);
+            $.xmlrpc({
+              url: this.server + '/object',
+              methodName: 'execute_kw',
+              crossDomain: true,
+              params: [this.db, this.uid, this.pass, 'stock.move', 'write', [ [p.mid], {
+                product_uom_qty: p.scan_qty,
+                state: 'done',
+                date: yyyy + '-' + mm + '-' + dd + ' ' + hh + ':' + ii + ':' + ss,
+                quant_ids: [[6, 0, responseP]]
+              }]],
+              success: (responseM: any, statusM: any, jqXHRM: any) => {
+                console.log('Stock:', responseM);
+                moves.push(p.mid);
+                pickingMoves.push({p: p.id, m: p.mid});
+              },
+              error: (jqXHRM: any, statusM: any, errorM: any) => {
+                console.log('Error : ' + errorM );
+              }
+            });
           },
-          error: (jqXHRP: any, statusP: any, error: any) => {
-            console.log('Error : ' + error );
+          error: (jqXHRP: any, statusP: any, errorP: any) => {
+            console.log('Error : ' + errorP );
           }
         });
       } else if (p.scan && p.qty !== p.scan_qty) {
         pickings.push(p.id);
         noPickings.push(p.id);
         isScan = true;
+
         $.xmlrpc({
           url: this.server + '/object',
           methodName: 'execute_kw',
           crossDomain: true,
-          params: [this.db, this.uid, this.pass, 'stock.move', 'write', [ [p.mid], {
-            product_uom_qty: p.scan_qty,
-            state: 'done',
-            invoice_state: '2binvoiced'
+          params: [this.db, this.uid, this.pass, 'stock.quant', 'create', [{
+            product_id: p.pid,
+            qty: p.scan_qty * -1,
+            location_id: 12,
+            in_date: yyyy + '-' + mm + '-' + dd + ' ' + hh + ':' + ii + ':' + ss
           }]],
-          success: (response: any, statusP: any, jqXHRP: any) => {
-            console.log('Stock:', response);
-            moves.push(p.mid);
-            pickingMoves.push({p: p.id, m: p.mid});
-          },
-          error: (jqXHRP: any, statusP: any, error: any) => {
-            console.log('Error : ' + error );
-          }
-        });
-        $.xmlrpc({
-          url: this.server + '/object',
-          methodName: 'execute_kw',
-          crossDomain: true,
-          params: [this.db, this.uid, this.pass, 'stock.move', 'search_read',
-          [ [['id', '=', p.mid]] ],
-          {'fields': ['partner_id', 'origin', 'sale_line_id']}],
-          success: (resM: any, statusM: any, jqXHRM: any) => {
+          success: (responseP: any, statusp: any, jqXHRP: any) => {
+            console.log('Stock  Quant: ', responseP);
             $.xmlrpc({
               url: this.server + '/object',
               methodName: 'execute_kw',
               crossDomain: true,
-              params: [this.db, this.uid, this.pass, 'stock.move', 'create', [{
-                split_from: resM[0][0].id,
-                sale_line_id: resM[0][0].sale_line_id[0],
-                product_id: p.pid,
-                product_uom_qty: p.qty - p.scan_qty,
-                product_uom: 1,
-                location_id: 12,
-                location_dest_id: 9,
-                name: 'STOCK-APP-' + Math.floor((Math.random() * 50000)),
-                partner_id: resM[0][0].partner_id[0],
-                origin: resM[0][0].origin,
+              params: [this.db, this.uid, this.pass, 'stock.move', 'write', [ [p.mid], {
+                product_uom_qty: p.scan_qty,
+                state: 'done',
+                invoice_state: '2binvoiced',
+                date: yyyy + '-' + mm + '-' + dd + ' ' + hh + ':' + ii + ':' + ss,
+                quant_ids: [[6, 0, responseP]]
               }]],
-              success: (response: any, statusP: any, jqXHRP: any) => {
-                console.log('New Stock:', response);
-                if (outMoves.length > 0) {
-                  for (const i of outMoves) {
-                    if (i.id === p.id) {
-                      i.moves.push(response[0]);
-                      break;
-                    } else {
-                      outMoves.push({id: p.id, moves: [response[0]]});
-                      break;
-                    }
-                  }
-                } else {
-                  outMoves.push({id: p.id, moves: [response[0]]});
-                }
+              success: (responseM: any, statusM: any, jqXHRM: any) => {
+                console.log('Stock:', responseM);
+                moves.push(p.mid);
+                pickingMoves.push({p: p.id, m: p.mid});
               },
-              error: (jqXHRP: any, statusP: any, error: any) => {
-                console.log('Error : ' + error );
+              error: (jqXHRM: any, statusM: any, errorM: any) => {
+                console.log('Error : ' + errorM );
+              }
+            });
+            $.xmlrpc({
+              url: this.server + '/object',
+              methodName: 'execute_kw',
+              crossDomain: true,
+              params: [this.db, this.uid, this.pass, 'stock.move', 'search_read',
+              [ [['id', '=', p.mid]] ],
+              {'fields': ['partner_id', 'origin', 'sale_line_id']}],
+              success: (resM: any, statusM: any, jqXHRM: any) => {
+                $.xmlrpc({
+                  url: this.server + '/object',
+                  methodName: 'execute_kw',
+                  crossDomain: true,
+                  params: [this.db, this.uid, this.pass, 'stock.move', 'create', [{
+                    split_from: resM[0][0].id,
+                    sale_line_id: resM[0][0].sale_line_id[0],
+                    product_id: p.pid,
+                    product_uom_qty: p.qty - p.scan_qty,
+                    product_uom: 1,
+                    location_id: 12,
+                    location_dest_id: 9,
+                    name: 'STOCK-APP-' + Math.floor((Math.random() * 50000)),
+                    partner_id: resM[0][0].partner_id[0],
+                    origin: resM[0][0].origin,
+                  }]],
+                  success: (responseM: any, statusP: any, jqXHRMM: any) => {
+                    console.log('New Stock:', responseM);
+                    if (outMoves.length > 0) {
+                      for (const i of outMoves) {
+                        if (i.id === p.id) {
+                          i.moves.push(responseM[0]);
+                          break;
+                        } else {
+                          outMoves.push({id: p.id, moves: [responseM[0]]});
+                          break;
+                        }
+                      }
+                    } else {
+                      outMoves.push({id: p.id, moves: [responseM[0]]});
+                    }
+                  },
+                  error: (jqXHRMM: any, statusMM: any, errorM: any) => {
+                    console.log('Error : ' + errorM );
+                  }
+                });
+              },
+              error: (jqXHRM: any, statusM: any, errorM: any) => {
+                console.log('Error : ' + errorM );
               }
             });
           },
-          error: (jqXHRM: any, statusM: any, errorM: any) => {
-            console.log('Error : ' + errorM );
+          error: (jqXHRP: any, statusP: any, errorP: any) => {
+            console.log('Error : ' + errorP );
           }
         });
       } else if (p.scan === false) {
@@ -790,7 +829,29 @@ export class PickingComponent implements OnInit, OnChanges {
           console.log('Error : ' + errorP );
         }
       });
-    }, 1200 * this.pTable.length);
+
+      /*for (const i of this.pTable) {
+        if (i.scan) {
+          $.xmlrpc({
+            url: this.server + '/object',
+            methodName: 'execute_kw',
+            crossDomain: true,
+            params: [this.db, this.uid, this.pass, 'stock.quant', 'create', [{
+              product_id: i.pid,
+              qty: i.scan_qty * -1,
+              location_id: 12,
+              in_date: yyyy + '-' + mm + '-' + dd + ' ' + hh + ':' + ii + ':' + ss
+            }]],
+            success: (responseP: any, statusp: any, jqXHRP: any) => {
+              console.log('Stock  Quant: ', responseP);
+            },
+            error: (jqXHRP: any, statusP: any, errorP: any) => {
+              console.log('Error : ' + errorP );
+            }
+          });
+        }
+      }*/
+    }, 1500 * this.pTable.length);
   }
 
   public listTrueData() {

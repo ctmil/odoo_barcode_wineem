@@ -41,8 +41,7 @@ export class ScannerComponent implements OnInit, OnChanges {
   }
 
   public ngOnChanges(): void {
-    if (this.logged) {
-    }
+    if (this.logged) {}
   }
 
   public scanNetwork(): void {
