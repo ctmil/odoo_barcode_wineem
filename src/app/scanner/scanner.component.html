@@ -15,18 +15,6 @@
         </div>
 
         <hr />
-        <div>
-          <h6>
-            Salud del Servidor:
-            <span *ngIf="safe == 'good'"><span class="dot green-dot"></span> Muy buena</span>
-            <span *ngIf="safe == 'normal'"><span class="dot"></span> Normal</span>
-            <span *ngIf="safe == 'slow'"><span class="dot orange-dot"></span> Lento</span>
-            <span *ngIf="safe == 'bad'"><span class="dot red-dot"></span> Mala</span>
-            <span *ngIf="safe == 'critical'"><span class="dot red-dot"></span> Crítica</span>
-            <span> ({{timer}} ms)</span>
-          </h6>
-        </div>
-        <hr />
 
         <div class="mt-4">
           <button mat-raised-button color="warn" (click)="logOut()">Log Out</button>

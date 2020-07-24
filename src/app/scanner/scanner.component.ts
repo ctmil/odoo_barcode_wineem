@@ -34,10 +34,6 @@ export class ScannerComponent implements OnInit, OnChanges {
   // Lifehooks funs
 
   public ngOnInit(): void {
-    this.scanNetwork();
-    this.connect = setInterval(() => {
-      this.scanNetwork();
-    }, 3000);
   }
 
   public ngOnChanges(): void {
