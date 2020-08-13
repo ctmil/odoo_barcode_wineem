@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="ar.com.moldeointeractive.odoobarcode" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>Odoo Barcode</name>
+    <name>Wineem Barcode</name>
     <description>
         Scanner for Barcode sync with Odoo.
     </description>
@@ -31,6 +31,7 @@
 
         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
                     <application android:usesCleartextTraffic="true" />
+                    <application android:requestLegacyExternalStorage="true" />
         </edit-config>
     </platform>
     <platform name="ios">
@@ -41,4 +42,5 @@
         <variable name="ANDROID_SUPPORT_V4_VERSION" value="27.+" />
     </plugin>
     <preference name="Orientation" value="portrait" />
+    <preference name="AndroidPersistentFileLocation" value="Compatibility" />
 </widget>

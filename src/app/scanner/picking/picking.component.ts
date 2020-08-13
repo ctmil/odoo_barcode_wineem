@@ -644,7 +644,7 @@ export class PickingComponent implements OnInit, OnChanges {
                     product_uom_qty: p.qty - p.scan_qty,
                     product_uom: 1,
                     location_id: 12,
-                    location_dest_id: 9,
+                    location_dest_id: 15,
                     name: 'STOCK-APP-' + Math.floor((Math.random() * 50000)),
                     partner_id: resM[0][0].partner_id[0],
                     origin: resM[0][0].origin,
