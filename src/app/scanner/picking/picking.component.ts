@@ -94,7 +94,7 @@ export class PickingComponent implements OnInit, OnChanges {
 
   /* Scann Barcode Function */
   public startScann(i: number): void {
-    if (this.pTable[i].scan === false) {
+    if (this.pTable[i].scan_qty < this.pTable[i].qty) {
       if (this.pTable[i].ean13 !== false) {
         this.barcode = '';
         this.barcode_format = '';
@@ -114,9 +114,7 @@ export class PickingComponent implements OnInit, OnChanges {
             console.log('Código escaneado correctamente');
             if (this.pTable[i].ean13 === result.text) {
               this.pTable[i].scan_qty = this.pTable[i].scan_qty + 1;
-              if (this.pTable[i].scan_qty === this.pTable[i].qty) {
-                this.pTable[i].scan = true;
-              }
+              this.pTable[i].scan = true;
             }
             this.isScanning = false;
           },
