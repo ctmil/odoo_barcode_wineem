@@ -608,6 +608,7 @@ export class PickingComponent implements OnInit, OnChanges {
               methodName: 'execute_kw',
               crossDomain: true,
               params: [this.db, this.uid, this.pass, 'stock.move', 'write', [ [p.mid], {
+                product_uos_qty: p.scan_qty,
                 product_uom_qty: p.scan_qty,
                 state: 'done',
                 invoice_state: '2binvoiced',
@@ -639,6 +640,7 @@ export class PickingComponent implements OnInit, OnChanges {
                     split_from: resM[0][0].id,
                     sale_line_id: resM[0][0].sale_line_id[0],
                     product_id: p.pid,
+                    product_uos_qty: p.qty - p.scan_qty,
                     product_uom_qty: p.qty - p.scan_qty,
                     product_uom: 1,
                     location_id: 12,

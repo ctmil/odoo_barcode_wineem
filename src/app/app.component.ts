@@ -39,10 +39,10 @@ export class AppComponent implements OnInit {
   public title = 'wineem';
   ////////////////////////////
   @ViewChild('form', {static: false}) form: ElementRef;
-  public server = 'http://54.186.243.111/xmlrpc/2';
-  // public server = 'http://192.168.0.12/xmlrpc/2';
-  public db = 'odoo_test';
-  // public db = 'odoo_prod';
+  // public server = 'http://staging.wineem.com.ar/xmlrpc/2';
+  public server = 'http://192.168.0.12/xmlrpc/2';
+  // public db = 'odoo_test';
+  public db = 'odoo_prod';
   public user = '';
   public pass = '';
   public uid = 0;
