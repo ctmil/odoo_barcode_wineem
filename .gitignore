@@ -1,1 +1,5 @@
 node_modules
+cordova/www
+cordova/plugins
+cordova/platforms
+cordova/www/README.md
