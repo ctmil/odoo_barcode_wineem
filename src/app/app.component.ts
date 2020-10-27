@@ -38,7 +38,7 @@ declare var cordova: any;
 export class AppComponent implements OnInit {
   public title = 'wineem';
   ////////////////////////////
-  @ViewChild('form', {static: false}) form: ElementRef;
+  @ViewChild('form') form: ElementRef;
   // public server = 'http://staging.wineem.com.ar/xmlrpc/2';
   public server = 'http://192.168.0.12/xmlrpc/2';
   // public db = 'odoo_test';
