@@ -1,10 +1,17 @@
-<div class="row mt-4" *ngIf="!showPicking && !showStock">
+<div class="row mt-3" *ngIf="!showPicking && !showStock">
   <div class="col-12">
     <div class="loading" *ngIf="inLoad">
         <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
       </div>
       <div class="odoo-content-data" *ngIf="!inLoad">
-        <h4>Odoo Wineem</h4>
+        <div class="row">
+          <div class="col-6">
+            <img src="assets/img/wineem.png" class="img-fluid" />
+          </div>
+          <div class="col-6 mt-2">
+            <h6>Odoo</h6>
+          </div>
+        </div>
         <h5 class="user mb-3">User: {{user}}</h5>
         <hr>
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnChanges, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnChanges, Input, Output, EventEmitter, Renderer2 } from '@angular/core';
 import { ToolsService } from '../../service/tools.service';
 import { Picking } from '../../picking';
 import { ConcatSource } from 'webpack-sources';
@@ -25,6 +25,8 @@ export class PickingComponent implements OnInit, OnChanges {
   @Input() logged = false;
   @Output() log = new EventEmitter();
   @Output() out = new EventEmitter();
+  globalListenFunc: Function;
+  code = '';
   ////////////////////////////
   public barcode = '';
   public barcode_format = '';
@@ -76,12 +78,20 @@ export class PickingComponent implements OnInit, OnChanges {
     disableSuccessBeep: false     // iOS and Android
   };
 
-  constructor(public t: ToolsService) { }
+  constructor(public t: ToolsService, public render: Renderer2) { }
 
   // Lifehooks funs
 
   public ngOnInit(): void {
     this.getPicking(this.server, this.db, this.user, this.pass, this.uid);
+
+    this.globalListenFunc = this.render.listen('document', 'keypress', e => {
+      if (e.key === 'Enter') {
+        this.code = '';
+      } else {
+        this.code += e.key;
+      }
+    });
   }
 
   public ngOnChanges(): void {

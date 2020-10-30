@@ -8,6 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
+import { MatToolbarModule } from '@angular/material/toolbar';
 
 /*MyComponents*/
 import { AppComponent } from './app.component';
@@ -31,7 +32,8 @@ import { CheckstockComponent } from './scanner/stock/checkstock/checkstock.compo
     MatInputModule,
     MatButtonModule,
     MatProgressSpinnerModule,
-    MatSelectModule
+    MatSelectModule,
+    MatToolbarModule
   ],
   providers: [],
   bootstrap: [AppComponent]

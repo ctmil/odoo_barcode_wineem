@@ -1,7 +1,7 @@
 <div class="container odoo-app mt8" *ngIf="!logged">
   <div class="row">
     <div class="col-12 text-center">
-        <img src="assets/img/odoo_logo.png" class="img-fluid" class="logo" />
+        <img src="assets/img/wineem.png" class="img-fluid" class="logo" />
         <h1 class="text-right">{{title}}</h1>
     </div>
   </div>
@@ -24,6 +24,13 @@
             </div>
         </form>
     </div>
+  </div>
+
+  <div *ngIf="db === 'odoo_test'">
+    <br>
+    <mat-toolbar color="primary">
+      <h4>El servidor de Odoo es debug</h4>
+    </mat-toolbar>  
   </div>
 </div>
 
