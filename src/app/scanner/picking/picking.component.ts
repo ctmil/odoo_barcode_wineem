@@ -87,6 +87,14 @@ export class PickingComponent implements OnInit, OnChanges {
 
     this.globalListenFunc = this.render.listen('document', 'keypress', e => {
       if (e.key === 'Enter') {
+        console.log(this.code);
+        if (this.pTable.find(x => x.ean13 === this.code)) {
+          console.log('Producto encontrado');
+          this.pTable.find(x => x.ean13 === this.code).scan_qty = this.pTable.find(x => x.ean13 === this.code).scan_qty + 1;
+          this.pTable.find(x => x.ean13 === this.code).scan = true;
+        } else {
+          alert('Este producto no tiene código de Barra cargado');
+        }
         this.code = '';
       } else {
         this.code += e.key;
