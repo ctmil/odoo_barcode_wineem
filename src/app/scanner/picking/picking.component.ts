@@ -86,18 +86,20 @@ export class PickingComponent implements OnInit, OnChanges {
     this.getPicking(this.server, this.db, this.user, this.pass, this.uid);
 
     this.globalListenFunc = this.render.listen('document', 'keypress', e => {
-      if (e.key === 'Enter') {
-        console.log(this.code);
-        if (this.pTable.find(x => x.ean13 === this.code)) {
-          console.log('Producto encontrado');
-          this.pTable.find(x => x.ean13 === this.code).scan_qty = this.pTable.find(x => x.ean13 === this.code).scan_qty + 1;
-          this.pTable.find(x => x.ean13 === this.code).scan = true;
+      if (this.pTable.length > 0) {
+        if (e.key === 'Enter') {
+          console.log(this.code);
+          if (this.pTable.find(x => x.ean13 === this.code)) {
+            console.log('Producto encontrado');
+            this.pTable.find(x => x.ean13 === this.code).scan_qty = this.pTable.find(x => x.ean13 === this.code).scan_qty + 1;
+            this.pTable.find(x => x.ean13 === this.code).scan = true;
+          } else {
+            alert('El producto ' + this.code + ' no ha sido localizado.');
+          }
+          this.code = '';
         } else {
-          alert('Este producto no tiene código de Barra cargado');
+          this.code += e.key;
         }
-        this.code = '';
-      } else {
-        this.code += e.key;
       }
     });
   }
