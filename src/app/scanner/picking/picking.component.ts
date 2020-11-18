@@ -91,7 +91,9 @@ export class PickingComponent implements OnInit, OnChanges {
           console.log(this.code);
           if (this.pTable.find(x => x.ean13 === this.code)) {
             console.log('Producto encontrado');
-            this.pTable.find(x => x.ean13 === this.code).scan_qty = this.pTable.find(x => x.ean13 === this.code).scan_qty + 1;
+            if (this.pTable.find(x => x.ean13 === this.code).scan_qty < this.pTable.find(x => x.ean13 === this.code).qty) {
+              this.pTable.find(x => x.ean13 === this.code).scan_qty = this.pTable.find(x => x.ean13 === this.code).scan_qty + 1;
+            }
             this.pTable.find(x => x.ean13 === this.code).scan = true;
           } else {
             alert('El producto ' + this.code + ' no ha sido localizado.');
