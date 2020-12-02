@@ -68,16 +68,16 @@
       <div *ngIf="box != undefined" id="tabla">
           <div class="row mb-2 over-table">
               <div class="col-2">Cat.</div>
-              <div class="col-3">SKU</div>
+              <div class="col-4">SKU</div>
               <div class="col-1 text-center">Q</div>
-              <div class="col-3 text-center">Scan</div>
+              <div class="col-2 text-center">Scan</div>
               <div class="col-3 text-center">Forzar</div>
           </div>
           <div style="font-size:14px;" *ngFor="let p of pTable;index as i;" [className]="p.scan && p.scan_qty == p.qty ? 'background-green row mb-2 pb-2 border-spe' : p.scan && p.scan_qty < p.qty ? 'background-yellow row mb-2 pb-2 border-spe' : 'no-back row mb-2 pb-2 border-spe'">
             <div class="col-2 text-uppercase">{{p.categ_id}}</div>
-            <div class="col-3">{{p.sku}}</div>
+            <div class="col-4">{{p.sku}} <mat-icon *ngIf="p.scan_qty > p.av">warning</mat-icon></div>
             <div class="col-1 text-center">{{p.qty}}</div>
-            <div class="col-3 text-center">
+            <div class="col-2 text-center">
               <button mat-raised-button *ngIf="p.ean13 != ''" (click)="startScann(i)">({{p.scan_qty}})</button>
             </div>
             <div class="col-3 text-center">

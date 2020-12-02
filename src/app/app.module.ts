@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatIconModule } from '@angular/material/icon'; 
 
 /*MyComponents*/
 import { AppComponent } from './app.component';
@@ -33,7 +34,8 @@ import { CheckstockComponent } from './scanner/stock/checkstock/checkstock.compo
     MatButtonModule,
     MatProgressSpinnerModule,
     MatSelectModule,
-    MatToolbarModule
+    MatToolbarModule,
+    MatIconModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -461,6 +461,7 @@ export class PickingComponent implements OnInit, OnChanges {
       let categ = '';
       let default_code = '';
       let qty = 0;
+      let av = 0;
       let ean13 = 0;
       let id = 0;
       let pid = 0;
@@ -484,11 +485,12 @@ export class PickingComponent implements OnInit, OnChanges {
             crossDomain: true,
             params: [this.db, this.uid, this.pass, 'product.product', 'search_read',
             [ [['id', '=', res[0][0].product_id[0]]] ],
-            {'fields': ['id', 'default_code', 'channel_id', 'ean13']}],
+            {'fields': ['id', 'default_code', 'channel_id', 'ean13', 'qty_available']}],
             success: (resP: any, statusP: any, jqXHRP: any) => {
               default_code = resP[0][0].default_code;
               ean13 = resP[0][0].ean13;
               pid = resP[0][0].id;
+              av = resP[0][0].qty_available;
 
               if (resP[0][0].channel_id) {
                 $.xmlrpc({
@@ -510,7 +512,8 @@ export class PickingComponent implements OnInit, OnChanges {
                       qty: qty,
                       ean13: ean13,
                       scan: false,
-                      scan_qty: 0
+                      scan_qty: 0,
+                      av: av
                     });
                     this.pTable.sort((a, b) => (b.sku > a.sku) ? 1 : -1);
                     this.pTable.sort((a, b) => (a.s > b.s) ? 1 : -1);
@@ -531,7 +534,8 @@ export class PickingComponent implements OnInit, OnChanges {
                   qty: qty,
                   ean13: ean13,
                   scan: false,
-                  scan_qty: 0
+                  scan_qty: 0,
+                  av: av
                 });
                 this.pTable.sort((a, b) => (b.sku > a.sku) ? 1 : -1);
                 this.pTable.sort((a, b) => (a.s > b.s) ? 1 : -1);
