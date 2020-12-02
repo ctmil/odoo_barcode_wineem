@@ -61,7 +61,11 @@
         </h6>
       </div>
 
-      <div *ngIf="box != undefined">
+      <h4 *ngIf="lastCode !== ''">
+        Last Code: {{lastCode}}
+      </h4>
+
+      <div *ngIf="box != undefined" id="tabla">
           <div class="row mb-2 over-table">
               <div class="col-2">Cat.</div>
               <div class="col-3">SKU</div>

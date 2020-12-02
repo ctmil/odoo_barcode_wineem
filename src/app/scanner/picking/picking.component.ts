@@ -34,6 +34,7 @@ export class PickingComponent implements OnInit, OnChanges {
   public pr_scanned = '';
   public showScann = false;
   public showErr = false;
+  public lastCode = '';
   ////////////////////////////
   public loading = true;
   public isScanning = false;
@@ -89,8 +90,9 @@ export class PickingComponent implements OnInit, OnChanges {
       if (this.pTable.length > 0) {
         if (e.key === 'Enter') {
           console.log(this.code);
+          this.lastCode = this.code;
           if (this.pTable.find(x => x.ean13 === this.code)) {
-            console.log('Producto encontrado');
+            alert('Producto encontrado, código: ' + this.code);
             if (this.pTable.find(x => x.ean13 === this.code).scan_qty < this.pTable.find(x => x.ean13 === this.code).qty) {
               this.pTable.find(x => x.ean13 === this.code).scan_qty = this.pTable.find(x => x.ean13 === this.code).scan_qty + 1;
             }
@@ -336,16 +338,28 @@ export class PickingComponent implements OnInit, OnChanges {
       url: this.server + '/object',
       methodName: 'execute_kw',
       crossDomain: true,
-      params: [this.db, this.uid, this.pass, 'stock.box', 'create', [{
-        name: 'BAPK-' + Math.floor((Math.random() * 5000)),
-        state: 'opened',
-        rep_id: picking_rep,
-        rep_rep_id: picking_rep_rep,
-        rep_shipping_id: picking_rep
-      }]],
-      success: (res: any, status: any, jqXHR: any) => {
-        console.log(res);
-        this.getBox(res[0], picking);
+      params: [this.db, this.uid, this.pass, 'stock.box', 'search_count', [[]]],
+      success: (can: any, statusC: any, jqXHRC: any) => {
+        console.log('Ct. Cajas:', can[0]);
+        $.xmlrpc({
+          url: this.server + '/object',
+          methodName: 'execute_kw',
+          crossDomain: true,
+          params: [this.db, this.uid, this.pass, 'stock.box', 'create', [{
+            name: 'BAPK-' + can[0],
+            state: 'opened',
+            rep_id: picking_rep,
+            rep_rep_id: picking_rep_rep,
+            rep_shipping_id: picking_rep
+          }]],
+          success: (res: any, status: any, jqXHR: any) => {
+            console.log(res);
+            this.getBox(res[0], picking);
+          },
+          error: (jqXHR: any, status: any, error: any) => {
+            console.log('Error : ' + error);
+          }
+        });
       },
       error: (jqXHR: any, status: any, error: any) => {
         console.log('Error : ' + error);
