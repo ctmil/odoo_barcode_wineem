@@ -61,25 +61,32 @@
         </h6>
       </div>
 
-      <h4 *ngIf="lastCode !== ''">
-        Last Code: {{lastCode}}
-      </h4>
+      <form #form (submit)="submitCode($event)" style="height:0;">
+        <input #barcodeScanner type="text" name="user" [(ngModel)]="code" placeholder="Código de Barras" required style="height:0;" />
+        <div class="mat-button d-none">
+          <button mat-raised-button color="primary">Buscar por código</button>
+        </div>
+      </form>
+
+      <div class="w-100 mb-3">
+        <button class="w-100" mat-raised-button color="primary" (click)="openScanner()">Modo Escaner</button>
+      </div>
 
       <div *ngIf="box != undefined" id="tabla">
           <div class="row mb-2 over-table">
               <div class="col-2">Cat.</div>
               <div class="col-4">SKU</div>
               <div class="col-1 text-center">Q</div>
-              <div class="col-2 text-center">Scan</div>
+              <!--div class="col-2 text-center">Scan</div-->
               <div class="col-3 text-center">Forzar</div>
           </div>
           <div style="font-size:14px;" *ngFor="let p of pTable;index as i;" [className]="p.scan && p.scan_qty == p.qty ? 'background-green row mb-2 pb-2 border-spe' : p.scan && p.scan_qty < p.qty ? 'background-yellow row mb-2 pb-2 border-spe' : 'no-back row mb-2 pb-2 border-spe'">
             <div class="col-2 text-uppercase">{{p.categ_id}}</div>
-            <div class="col-4">{{p.sku}} <mat-icon *ngIf="p.scan_qty > p.av">warning</mat-icon></div>
+            <div class="col-4">{{p.sku}} <mat-icon *ngIf="p.qty > p.av">warning</mat-icon></div>
             <div class="col-1 text-center">{{p.qty}}</div>
-            <div class="col-2 text-center">
+            <!--div class="col-2 text-center">
               <button mat-raised-button *ngIf="p.ean13 != ''" (click)="startScann(i)">({{p.scan_qty}})</button>
-            </div>
+            </div-->
             <div class="col-3 text-center">
                 <button mat-raised-button (click)="addQty(i)">({{p.scan_qty}})</button>
             </div>

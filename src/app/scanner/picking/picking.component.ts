@@ -1,7 +1,6 @@
-import { Component, OnInit, OnChanges, Input, Output, EventEmitter, Renderer2 } from '@angular/core';
+import { Component, OnInit, OnChanges, Input, Output, EventEmitter, Renderer2, ViewChild, ElementRef } from '@angular/core';
 import { ToolsService } from '../../service/tools.service';
 import { Picking } from '../../picking';
-import { ConcatSource } from 'webpack-sources';
 
 declare var jquery: any;
 declare var $: any;
@@ -27,6 +26,7 @@ export class PickingComponent implements OnInit, OnChanges {
   @Output() out = new EventEmitter();
   globalListenFunc: Function;
   code = '';
+  @ViewChild('barcodeScanner', {static: false}) barcodeScanner: ElementRef;
   ////////////////////////////
   public barcode = '';
   public barcode_format = '';
@@ -86,14 +86,14 @@ export class PickingComponent implements OnInit, OnChanges {
   public ngOnInit(): void {
     this.getPicking(this.server, this.db, this.user, this.pass, this.uid);
 
-    this.globalListenFunc = this.render.listen('document', 'keypress', e => {
+    /*this.globalListenFunc = this.render.listen('document', 'keypress', e => {
       if (this.pTable.length > 0) {
         if (e.key === 'Enter') {
           console.log(this.code);
           this.lastCode = this.code;
           if (this.pTable.find(x => x.ean13 === this.code)) {
-            alert('Producto encontrado, código: ' + this.code);
             if (this.pTable.find(x => x.ean13 === this.code).scan_qty < this.pTable.find(x => x.ean13 === this.code).qty) {
+              alert('Producto encontrado, código: ' + this.code);
               this.pTable.find(x => x.ean13 === this.code).scan_qty = this.pTable.find(x => x.ean13 === this.code).scan_qty + 1;
             }
             this.pTable.find(x => x.ean13 === this.code).scan = true;
@@ -105,11 +105,37 @@ export class PickingComponent implements OnInit, OnChanges {
           this.code += e.key;
         }
       }
-    });
+    });*/
   }
 
   public ngOnChanges(): void {
 
+  }
+
+  openScanner(): void {
+    console.log(this.barcodeScanner);
+    setTimeout(()=>{
+      this.barcodeScanner.nativeElement.focus();
+    },0);
+  }
+
+  public submitCode(e: any): void {
+    if (this.pTable.length > 0) {
+      console.log(this.code);
+      this.lastCode = this.code;
+      if (this.pTable.find(x => x.ean13 === this.code)) {
+        if (this.pTable.find(x => x.ean13 === this.code).scan_qty < this.pTable.find(x => x.ean13 === this.code).qty) {
+          this.pTable.find(x => x.ean13 === this.code).scan_qty = this.pTable.find(x => x.ean13 === this.code).scan_qty + 1;
+        } else {
+          alert('El producto ' + this.code + ' ya fue escaneado.');
+        }
+        this.pTable.find(x => x.ean13 === this.code).scan = true;
+      } else {
+        alert('El producto ' + this.code + ' no ha sido localizado.');
+      }
+      this.code = '';
+    }
+    this.code = '';
   }
 
   // END - Lifehooks funs
@@ -117,7 +143,7 @@ export class PickingComponent implements OnInit, OnChanges {
   // Internal use funs
 
   /* Scann Barcode Function */
-  public startScann(i: number): void {
+  /*public startScann(i: number): void {
     if (this.pTable[i].scan_qty < this.pTable[i].qty) {
       if (this.pTable[i].ean13 !== false) {
         this.barcode = '';
@@ -154,7 +180,7 @@ export class PickingComponent implements OnInit, OnChanges {
     } else {
       alert('Producto ya escaneado');
     }
-  }
+  }*/
 
   public getPicking(server_url: string, db: string, user: string, pass: string, uid: number): void {
     $.xmlrpc({
