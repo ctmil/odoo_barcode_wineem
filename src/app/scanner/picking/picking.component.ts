@@ -27,6 +27,7 @@ export class PickingComponent implements OnInit, OnChanges {
   globalListenFunc: Function;
   code = '';
   @ViewChild('barcodeScanner', {static: false}) barcodeScanner: ElementRef;
+  isScanner = false;
   ////////////////////////////
   public barcode = '';
   public barcode_format = '';
@@ -121,9 +122,31 @@ export class PickingComponent implements OnInit, OnChanges {
 
   public submitCode(e: any): void {
     if (this.pTable.length > 0) {
-      console.log(this.code);
       this.lastCode = this.code;
-      if (this.pTable.find(x => x.ean13 === this.code)) {
+      console.log(this.code);
+      let tables = this.pTable.filter(x => x.ean13 === this.code);
+      console.log(tables);
+
+      if (tables[0].ean13 === this.code) {
+        if (tables[tables.length - 1].scan_qty === tables[tables.length - 1].qty) {
+          alert('El producto ' + this.code + ' ya fue escaneado.');
+        }
+      }
+      
+      for (const t of tables) {
+        if (t.ean13 === this.code) {
+          if (t.scan_qty < t.qty) {
+            this.pTable.find(x => x.id === t.id).scan_qty = this.pTable.find(x => x.id === t.id).scan_qty + 1;
+            this.pTable.find(x => x.id === t.id).scan = true;
+            break;
+          }
+          this.pTable.find(x => x.id === t.id).scan = true;
+        } else {
+          alert('El producto ' + this.code + ' no ha sido localizado.');
+        }
+      }
+
+      /*if (this.pTable.find(x => x.ean13 === this.code)) {
         if (this.pTable.find(x => x.ean13 === this.code).scan_qty < this.pTable.find(x => x.ean13 === this.code).qty) {
           this.pTable.find(x => x.ean13 === this.code).scan_qty = this.pTable.find(x => x.ean13 === this.code).scan_qty + 1;
         } else {
@@ -132,7 +155,7 @@ export class PickingComponent implements OnInit, OnChanges {
         this.pTable.find(x => x.ean13 === this.code).scan = true;
       } else {
         alert('El producto ' + this.code + ' no ha sido localizado.');
-      }
+      }*/
       this.code = '';
     }
     this.code = '';
