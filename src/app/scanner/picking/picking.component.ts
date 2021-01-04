@@ -127,23 +127,27 @@ export class PickingComponent implements OnInit, OnChanges {
       let tables = this.pTable.filter(x => x.ean13 === this.code);
       console.log(tables);
 
-      if (tables[0].ean13 === this.code) {
-        if (tables[tables.length - 1].scan_qty === tables[tables.length - 1].qty) {
-          alert('El producto ' + this.code + ' ya fue escaneado.');
-        }
-      }
-      
-      for (const t of tables) {
-        if (t.ean13 === this.code) {
-          if (t.scan_qty < t.qty) {
-            this.pTable.find(x => x.id === t.id).scan_qty = this.pTable.find(x => x.id === t.id).scan_qty + 1;
-            this.pTable.find(x => x.id === t.id).scan = true;
-            break;
+      if (tables.length > 0) {
+        if (tables[0].ean13 === this.code) {
+          if (tables[tables.length - 1].scan_qty === tables[tables.length - 1].qty) {
+            alert('El producto ' + this.code + ' ya fue escaneado.');
           }
-          this.pTable.find(x => x.id === t.id).scan = true;
-        } else {
-          alert('El producto ' + this.code + ' no ha sido localizado.');
         }
+        
+        for (const t of tables) {
+          if (t.ean13 === this.code) {
+            if (t.scan_qty < t.qty) {
+              this.pTable.find(x => x.id === t.id).scan_qty = this.pTable.find(x => x.id === t.id).scan_qty + 1;
+              this.pTable.find(x => x.id === t.id).scan = true;
+              break;
+            }
+            this.pTable.find(x => x.id === t.id).scan = true;
+          } else {
+            alert('El producto ' + this.code + ' no ha sido localizado.');
+          }
+        }
+      } else {
+        this.code = '';
       }
 
       /*if (this.pTable.find(x => x.ean13 === this.code)) {
