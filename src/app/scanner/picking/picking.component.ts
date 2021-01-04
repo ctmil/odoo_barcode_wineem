@@ -137,11 +137,11 @@ export class PickingComponent implements OnInit, OnChanges {
         for (const t of tables) {
           if (t.ean13 === this.code) {
             if (t.scan_qty < t.qty) {
-              this.pTable.find(x => x.id === t.id).scan_qty = this.pTable.find(x => x.id === t.id).scan_qty + 1;
-              this.pTable.find(x => x.id === t.id).scan = true;
+              this.pTable.find(x => x.mid === t.mid).scan_qty = this.pTable.find(x => x.mid === t.mid).scan_qty + 1;
+              this.pTable.find(x => x.mid === t.mid).scan = true;
               break;
             }
-            this.pTable.find(x => x.id === t.id).scan = true;
+            this.pTable.find(x => x.mid === t.mid).scan = true;
           } else {
             alert('El producto ' + this.code + ' no ha sido localizado.');
           }
