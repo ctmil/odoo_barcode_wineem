@@ -1,13 +1,37 @@
+<h2>Escanear Código</h2>
+
+<form #form (submit)="search($event)" style="height:0;">
+  <input #barcodeScanner type="text" name="user" [(ngModel)]="barcode" placeholder="Código de Barras" required style="height:0;" />
+  <div class="mat-button d-none">
+    <button mat-raised-button color="primary">Buscar por código</button>
+  </div>
+</form>
+
+<div class="w-100 mb-3">
+  <button class="w-100" mat-raised-button color="primary" (click)="startScann()">Modo Escaner</button>
+</div>
+
 <div style="height:100px;">
-  <button mat-raised-button color="primary" class="w-100" (click)="search()">
+  <!--button mat-raised-button color="primary" class="w-100" (click)="search()">
     Ver Información
-  </button>
+  </button-->
   <div *ngIf="showProduct == true" class="mt-3">
-    <h5>
-      {{product.name}}
-    </h5>
+    <div class="row">
+      <div class="col-3">
+        <img [src]="'data:image/jpeg;base64,' + product.image_medium | safe" *ngIf="product.image_medium" class="img-fluid" />
+      </div>
+      <div class="col-9">
+        <h5>{{product.name}}</h5>
+      </div>
+    </div>
+
+    <br />
+    
     <h6>
-      Cantidad: {{product.qty_available}} unidades
+      Cantidad a mano: {{product.qty_available}} unidades
+    </h6>
+    <h6>
+      Cantidad prevista: {{product.virtual_available}} unidades
     </h6>
   </div>
 </div>

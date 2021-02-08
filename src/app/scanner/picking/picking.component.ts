@@ -115,9 +115,9 @@ export class PickingComponent implements OnInit, OnChanges {
 
   openScanner(): void {
     console.log(this.barcodeScanner);
-    setTimeout(()=>{
+    setTimeout(() => {
       this.barcodeScanner.nativeElement.focus();
-    },0);
+    }, 0);
   }
 
   public submitCode(e: any): void {
@@ -133,7 +133,7 @@ export class PickingComponent implements OnInit, OnChanges {
             alert('El producto ' + this.code + ' ya fue escaneado.');
           }
         }
-        
+
         for (const t of tables) {
           if (t.ean13 === this.code) {
             if (t.scan_qty < t.qty) {
