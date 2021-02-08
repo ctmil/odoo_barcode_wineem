@@ -11,27 +11,8 @@
   <button class="w-100" mat-raised-button color="primary" (click)="startScann()">Modo Escaner</button>
 </div>
 
-<div style="height:200px;">
+<div style="height:100px;">
   <div *ngIf="showProduct == true" class="mt-3">
-    <div class="row">
-      <div class="col-3">
-        <img [src]="'data:image/jpeg;base64,' + product.image_medium | safe" *ngIf="product.image_medium" class="img-fluid" />
-      </div>
-      <div class="col-9">
-        <h5>{{product.name}}</h5>
-      </div>
-    </div>
-
-    <br />
     
-    <h6>
-      Cantidad a mano: {{product.qty_available}} unidades
-    </h6>
-    <h6>
-      Cantidad prevista: {{product.virtual_available}} unidades
-    </h6>
-    <h6>
-      Canal: {{product.channel_id[1]}} unidades
-    </h6>
   </div>
 </div>

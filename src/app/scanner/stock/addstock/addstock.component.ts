@@ -7,11 +7,12 @@ declare var window: any;
 declare var cordova: any;
 
 @Component({
-  selector: 'app-checkstock',
-  templateUrl: './checkstock.component.html',
-  styleUrls: ['./checkstock.component.scss']
+  selector: 'app-addstock',
+  templateUrl: './addstock.component.html',
+  styleUrls: ['./addstock.component.scss']
 })
-export class CheckstockComponent implements OnInit {
+export class AddstockComponent implements OnInit {
+
   @Input() server = '';
   @Input() db = '';
   @Input() user = '';
@@ -51,8 +52,8 @@ export class CheckstockComponent implements OnInit {
       url: this.server + '/object',
       methodName: 'execute_kw',
       crossDomain: true,
-      params: [this.db, this.uid, this.pass, 'product.product', 'search_read', [ [['ean13', '=', ean13]] ],
-      {'fields': ['name', 'qty_available', 'virtual_available', 'image_small', 'channel_id']}],
+      params: [this.db, this.uid, this.pass, 'product.template', 'search_read', [ [['ean13', '=', ean13]] ],
+      {'fields': ['name', 'qty_available']}],
       success: (response: any, status: any, jqXHR: any) => {
         console.log(response[0][0]);
         if (response[0][0]) {

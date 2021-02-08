@@ -18,6 +18,7 @@ import { PickingComponent } from './scanner/picking/picking.component';
 import { StockComponent } from './scanner/stock/stock.component';
 import { CheckstockComponent } from './scanner/stock/checkstock/checkstock.component';
 import { SafePipe } from './safe.pipe';
+import { AddstockComponent } from './scanner/stock/addstock/addstock.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { SafePipe } from './safe.pipe';
     PickingComponent,
     StockComponent,
     CheckstockComponent,
-    SafePipe
+    SafePipe,
+    AddstockComponent
   ],
   imports: [
     BrowserModule,
