@@ -19,9 +19,11 @@ export class AddstockComponent implements OnInit {
   @Input() pass = '';
   @Input() uid = 0;
 
-  product: any;
+  product: any = {};
+  stock = 0;
   barcode = '';
   showProduct = false;
+  showStatus = false;
 
   ////////////////////////////
   @ViewChild('barcodeScanner', {static: false}) barcodeScanner: ElementRef;
@@ -52,7 +54,7 @@ export class AddstockComponent implements OnInit {
       url: this.server + '/object',
       methodName: 'execute_kw',
       crossDomain: true,
-      params: [this.db, this.uid, this.pass, 'product.template', 'search_read', [ [['ean13', '=', ean13]] ],
+      params: [this.db, this.uid, this.pass, 'product.product', 'search_read', [ [['ean13', '=', ean13]] ],
       {'fields': ['name', 'qty_available']}],
       success: (response: any, status: any, jqXHR: any) => {
         console.log(response[0][0]);
@@ -65,6 +67,44 @@ export class AddstockComponent implements OnInit {
       },
       error: (jqXHR: any, status: any, error: any) => {
         console.log('Error : ' + error );
+      }
+    });
+  }
+
+  public loadStock() {
+    console.log(this.stock);
+    console.log(this.product.id);
+
+    const today = new Date();
+    const dd = String(today.getDate()).padStart(2, '0');
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const yyyy = today.getFullYear();
+    const ss = String(today.getSeconds());
+    const ii = String(today.getMinutes());
+    const hh = String(today.getUTCHours());
+
+    $.xmlrpc({
+      url: this.server + '/object',
+      methodName: 'execute_kw',
+      crossDomain: true,
+      params: [this.db, this.uid, this.pass, 'stock.quant', 'create', [{
+        product_id: this.product.id,
+        qty: this.stock,
+        location_id: 12,
+        in_date: yyyy + '-' + mm + '-' + dd + ' ' + hh + ':' + ii + ':' + ss
+      }]],
+      success: (responseP: any, statusp: any, jqXHRP: any) => {
+        console.log('Stock Agregado');
+        this.showProduct = false;
+        this.showStatus = true;
+        setTimeout(() => {
+          this.stock = 0;
+          this.product = {};
+          this.showStatus = false;
+        }, 5000);
+      },
+      error: (jqXHRM: any, statusM: any, errorM: any) => {
+        console.log('Error : ' + errorM );
       }
     });
   }

@@ -11,7 +11,7 @@
 </div>
 
 <div id="addStock" *ngIf="addStockVisible">
-
+    <app-addstock [server]="server" [db]="db" [user]="user" [pass]="pass" [uid]="uid"></app-addstock>
 </div>
 
 <div id="fixStock" *ngIf="fixStockVisible">
