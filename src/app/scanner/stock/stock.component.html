@@ -21,3 +21,13 @@
 <div id="checkStock" *ngIf="checkStockVisible">
     <app-checkstock [server]="server" [db]="db" [user]="user" [pass]="pass" [uid]="uid"></app-checkstock>
 </div>
+
+<div *ngIf="addStockVisible || fixStockVisible || checkStockVisible">
+    <button mat-raised-button color="primary" (click)="navStock = true;addStockVisible = false;fixStockVisible = false;checkStockVisible = false;">Volver</button>
+</div>
+
+<div class="mt-3" *ngIf="navStock">
+    <button mat-raised-button color="primary" (click)="goOut()">
+      Volver al Menu
+    </button>
+  </div>

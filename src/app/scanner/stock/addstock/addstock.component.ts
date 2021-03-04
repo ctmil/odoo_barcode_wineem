@@ -24,6 +24,7 @@ export class AddstockComponent implements OnInit {
   barcode = '';
   showProduct = false;
   showStatus = false;
+  msg = 'agregaron';
 
   ////////////////////////////
   @ViewChild('barcodeScanner', {static: false}) barcodeScanner: ElementRef;
@@ -96,12 +97,98 @@ export class AddstockComponent implements OnInit {
       success: (responseP: any, statusp: any, jqXHRP: any) => {
         console.log('Stock Agregado');
         this.showProduct = false;
+        this.msg = 'agregaron';
         this.showStatus = true;
         setTimeout(() => {
           this.stock = 0;
           this.product = {};
           this.showStatus = false;
         }, 5000);
+
+        $.xmlrpc({
+          url: this.server + '/object',
+          methodName: 'execute_kw',
+          crossDomain: true,
+          params: [this.db, this.uid, this.pass, 'stock.move', 'create', [{
+            product_id: this.product.id,
+            product_uos_qty: this.stock,
+            product_uom_qty: this.stock,
+            product_uom: 1,
+            location_id: 22,
+            location_dest_id: 12,
+            state: 'done',
+            name: 'STOCK-APP-' + Math.floor((Math.random() * 50000)),
+            quant_ids: [[6, 0, responseP]]
+          }]],
+          success: (responseM: any, statusP: any, jqXHRMM: any) => {
+            console.log('New Stock:', responseM);
+          },
+          error: (jqXHRMM: any, statusMM: any, errorM: any) => {
+            console.log('Error : ' + errorM );
+          }
+        });
+      },
+      error: (jqXHRM: any, statusM: any, errorM: any) => {
+        console.log('Error : ' + errorM );
+      }
+    });
+  }
+
+  lessStock() {
+    console.log(this.stock);
+    console.log(this.product.id);
+
+    const today = new Date();
+    const dd = String(today.getDate()).padStart(2, '0');
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const yyyy = today.getFullYear();
+    const ss = String(today.getSeconds());
+    const ii = String(today.getMinutes());
+    const hh = String(today.getUTCHours());
+
+    $.xmlrpc({
+      url: this.server + '/object',
+      methodName: 'execute_kw',
+      crossDomain: true,
+      params: [this.db, this.uid, this.pass, 'stock.quant', 'create', [{
+        product_id: this.product.id,
+        qty: this.stock * -1,
+        location_id: 12,
+        in_date: yyyy + '-' + mm + '-' + dd + ' ' + hh + ':' + ii + ':' + ss
+      }]],
+      success: (responseP: any, statusp: any, jqXHRP: any) => {
+        console.log('Stock Restado');
+        this.showProduct = false;
+        this.msg = 'restaron';
+        this.showStatus = true;
+        setTimeout(() => {
+          this.stock = 0;
+          this.product = {};
+          this.showStatus = false;
+        }, 5000);
+
+        $.xmlrpc({
+          url: this.server + '/object',
+          methodName: 'execute_kw',
+          crossDomain: true,
+          params: [this.db, this.uid, this.pass, 'stock.move', 'create', [{
+            product_id: this.product.id,
+            product_uos_qty: this.stock,
+            product_uom_qty: this.stock,
+            product_uom: 1,
+            location_id: 12,
+            location_dest_id: 22,
+            state: 'done',
+            name: 'STOCK-APP-' + Math.floor((Math.random() * 50000)),
+            quant_ids: [[6, 0, responseP]]
+          }]],
+          success: (responseM: any, statusP: any, jqXHRMM: any) => {
+            console.log('New Stock:', responseM);
+          },
+          error: (jqXHRMM: any, statusMM: any, errorM: any) => {
+            console.log('Error : ' + errorM );
+          }
+        });
       },
       error: (jqXHRM: any, statusM: any, errorM: any) => {
         console.log('Error : ' + errorM );

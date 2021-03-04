@@ -25,9 +25,12 @@
     <div class="w-100 mb-3">
       <button class="w-100" mat-raised-button color="primary" (click)="loadStock()">Cargar Stock</button>
     </div>
+    <div class="w-100 mb-2">
+      <button class="w-100" mat-raised-button color="primary" (click)="lessStock()">Sacar Stock</button>
+    </div>
   </div>
 
   <div *ngIf="showStatus == true" class="mt-3">
-    <h3>Se agregaron {{stock}} unidades de {{product.name}}</h3>
+    <h3>Se {{msg}} {{stock}} unidades de {{product.name}}</h3>
   </div>
 </div>

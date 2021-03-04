@@ -14,6 +14,7 @@ export class StockComponent implements OnInit, OnChanges {
   ////////////////////////////////////////////
   @Input() inLoad = true;
   @Input() logged = false;
+  @Output() out = new EventEmitter();
   @Output() log = new EventEmitter();
   ////////////////////////////
 
@@ -47,6 +48,10 @@ export class StockComponent implements OnInit, OnChanges {
   public checkStock(): void {
     this.navStock = false;
     this.checkStockVisible = true;
+  }
+
+  public goOut() {
+    this.out.emit();
   }
 
   // END - Internal use funs

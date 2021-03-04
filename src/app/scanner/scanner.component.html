@@ -36,7 +36,7 @@
 </div>
 
 <div class="container mt-4 sodoo-logged odoo-input" *ngIf="showStock">
-  <app-stock [server]="server" [db]="db" [user]="user" [pass]="pass" [uid]="uid" [inLoad]="inLoad" [logged]="logged"></app-stock>
+  <app-stock [server]="server" [db]="db" [user]="user" [pass]="pass" [uid]="uid" [inLoad]="inLoad" [logged]="logged" (out)="goOut()"></app-stock>
 </div>
 
 <!--div class="mt-3">
