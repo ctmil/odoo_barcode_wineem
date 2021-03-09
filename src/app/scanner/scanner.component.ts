@@ -24,6 +24,7 @@ export class ScannerComponent implements OnInit, OnChanges {
   ////////////////////////////
   public showPicking = false;
   public showStock = false;
+  public showFix = false;
   ////////////////////////////
   safe = 'normal';
   timer = 0;
@@ -82,11 +83,17 @@ export class ScannerComponent implements OnInit, OnChanges {
     clearInterval(this.connect);
   }
 
+  public fix(): void {
+    this.showFix = true;
+    clearInterval(this.connect);
+  }
+
   // END - Internal use funs
 
   public goOut(): void {
     this.showPicking = false;
     this.showStock = false;
+    this.showFix = false;
     this.scanNetwork();
     this.connect = setInterval(() => {
       this.scanNetwork();

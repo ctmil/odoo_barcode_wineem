@@ -19,6 +19,7 @@ import { StockComponent } from './scanner/stock/stock.component';
 import { CheckstockComponent } from './scanner/stock/checkstock/checkstock.component';
 import { SafePipe } from './safe.pipe';
 import { AddstockComponent } from './scanner/stock/addstock/addstock.component';
+import { FixstockComponent } from './scanner/stock/fixstock/fixstock.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { AddstockComponent } from './scanner/stock/addstock/addstock.component';
     StockComponent,
     CheckstockComponent,
     SafePipe,
-    AddstockComponent
+    AddstockComponent,
+    FixstockComponent
   ],
   imports: [
     BrowserModule,
